@@ -1,10 +1,42 @@
 "use client";
 
+import AddRecordModal from "@/components/AddRecordModal";
 import Sheet from "@/components/Sheet";
+import { formatDateString, formatTimeString } from "@/lib/utils/time";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const NewSheet = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sheetDate = formatDateString(searchParams.get("date"));
+  const sheetStartTime = formatTimeString(searchParams.get("startTime"));
+  const sheetEndTime = formatTimeString(searchParams.get("endTime"));
+  const sheetLocation = searchParams.get("location");
+
+  useEffect(() => {
+    if (
+      sheetDate === "N/A" ||
+      sheetStartTime === "N/A" ||
+      sheetEndTime === "N/A" ||
+      !sheetLocation
+    ) {
+      router.push("/sheets");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetDate, sheetStartTime, sheetEndTime, sheetLocation]);
+
+  if (
+    sheetDate === "N/A" ||
+    sheetStartTime === "N/A" ||
+    sheetEndTime === "N/A" ||
+    !sheetLocation
+  ) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col items-center p-12">
       <div className="self-start">
@@ -17,7 +49,9 @@ const NewSheet = () => {
         </Link>
       </div>
       <h2 className="text-4xl">New Sheet</h2>
-      <p className="mb-12">Macarthur Waddy · 20 Nov 2024 · 7:00pm - 10:00pm</p>
+      <p className="mb-12">
+        {sheetLocation} · {sheetDate} · {sheetStartTime} - {sheetEndTime}
+      </p>
 
       <Sheet />
 
@@ -25,9 +59,7 @@ const NewSheet = () => {
         <button className="bg-pink-500 text-white px-4 py-2 rounded-md">
           Finish shift
         </button>
-        <button className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">
-          Add row
-        </button>
+        <AddRecordModal />
       </div>
     </div>
   );

@@ -71,9 +71,15 @@ const SheetRow = ({
           {isModalOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg">
-                <h2 className="text-center text-lg font-bold mb-4">
-                  Sign off - {studentName}
-                </h2>
+                <div className="text-center mb-4">
+                  <h2 className="text-lg font-bold">
+                    Sign off - {studentName}
+                  </h2>
+                  <p>
+                    {startTime} - {endTime}, {subject}
+                  </p>
+                </div>
+
                 <div className="border rounded-lg">
                   <SignatureCanvas
                     ref={sigCanvas}

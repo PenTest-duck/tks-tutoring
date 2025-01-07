@@ -1,13 +1,14 @@
 import type { Config } from "tailwindcss";
 import colors from "tailwindcss/colors";
 import preline from "preline/plugin";
+import forms from "@tailwindcss/forms";
 
 export default {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "node_modules/preline/dist/*.js",
+    "./node_modules/preline/dist/*.js",
   ],
   theme: {
     extend: {
@@ -18,5 +19,5 @@ export default {
       },
     },
   },
-  plugins: [preline],
+  plugins: [preline, forms],
 } satisfies Config;

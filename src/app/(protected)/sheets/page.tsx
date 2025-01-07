@@ -1,40 +1,55 @@
 "use client";
 
+import { dateTo24HrTime } from "@/lib/utils/time";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Sheets = () => {
-  const todayDate = new Date().toISOString().split("T")[0];
+  const getTodayDate = () => new Date().toISOString().split("T")[0];
   const getCurrentRoundedHour = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() + 30);
     now.setMinutes(0);
     return now;
   };
-
-  const [isModalOpen, setIsModalOpen] = useState(true);
-  const [date, setDate] = useState(todayDate);
-  const [startTime, setStartTime] = useState(
-    getCurrentRoundedHour().toLocaleTimeString("en-US", {
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  );
-  const [endTime, setEndTime] = useState(() => {
+  const getDefaultStartTime = () => dateTo24HrTime(getCurrentRoundedHour());
+  const getDefaultEndTime = () => {
     const roundedHour = getCurrentRoundedHour();
     roundedHour.setHours(roundedHour.getHours() + 3);
-    return roundedHour.toLocaleTimeString("en-US", {
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  });
+    return dateTo24HrTime(roundedHour);
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [date, setDate] = useState(getTodayDate());
+  const [startTime, setStartTime] = useState(getDefaultStartTime());
+  const [endTime, setEndTime] = useState(getDefaultEndTime());
   const [location, setLocation] = useState("");
   const router = useRouter();
 
+  const resetState = () => {
+    setDate(getTodayDate());
+    setStartTime(getDefaultStartTime());
+    setEndTime(getDefaultEndTime());
+    setLocation("");
+  };
+
+  const openModal = () => {
+    resetState();
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    resetState();
+  };
+
   const handleCreate = () => {
-    router.push("/sheets/new");
+    router.push(
+      `/sheets/new?date=${date}&startTime=${startTime}&endTime=${endTime}&location=${encodeURIComponent(
+        location
+      )}`
+    );
+    closeModal();
   };
 
   return (
@@ -43,15 +58,22 @@ const Sheets = () => {
         <h2 className="text-3xl font-bold">All sheets</h2>
         <>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={openModal}
             className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded"
           >
             Create new sheet
           </button>
 
           {isModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full md:w-auto md:min-w-[500px]">
+            <div
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  closeModal();
+                }
+              }}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+            >
+              <div className="bg-white dark:bg-gray-800 p-6 border rounded-lg w-full md:w-auto md:min-w-[500px]">
                 <h2 className="text-center text-lg font-bold mb-4">
                   Create new sheet
                 </h2>
@@ -67,9 +89,9 @@ const Sheets = () => {
                     <input
                       type="date"
                       id="date-input"
-                      className="w-full"
+                      className="w-full p-2 rounded-lg border border-gray-200 dark:border-neutral-700"
                       min="2024-01-01"
-                      max={todayDate}
+                      max={getTodayDate()}
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
                       required
@@ -86,7 +108,7 @@ const Sheets = () => {
                       <input
                         type="time"
                         id="start-time-input"
-                        className="w-full"
+                        className="w-full p-2 rounded-lg border border-gray-200 dark:border-neutral-700"
                         placeholder="Start time"
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
@@ -103,7 +125,7 @@ const Sheets = () => {
                       <input
                         type="time"
                         id="end-time-input"
-                        className="w-full"
+                        className="w-full p-2 rounded-lg border border-gray-200 dark:border-neutral-700"
                         placeholder="End time"
                         value={endTime}
                         onChange={(e) => setEndTime(e.target.value)}
@@ -120,9 +142,10 @@ const Sheets = () => {
                     </label>
                     <select
                       id="location-input"
-                      className="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                      className="py-3 px-4 pe-9 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
+                      required
                     >
                       <option>Select location</option>
                       <option>Baker Hake</option>
@@ -134,10 +157,7 @@ const Sheets = () => {
                 </div>
 
                 <div className="flex flex-row justify-end mt-4">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2"
-                  >
+                  <button onClick={closeModal} className="px-4 py-2">
                     Cancel
                   </button>
                   <button
