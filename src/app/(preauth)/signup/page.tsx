@@ -1,16 +1,15 @@
-"use client";
-
 import PasswordEye from "@/components/PasswordEye";
 import { useAuth } from "@/context/AuthUserContext";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { signup } from "./actions";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  // const router = useRouter();
   const [error, setError] = useState("");
   const { createUserWithEmailAndPassword } = useAuth();
 
@@ -18,16 +17,16 @@ const Signup = () => {
     event.preventDefault();
     setError("");
 
-    createUserWithEmailAndPassword(email, password)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .then((_authUser) => {
-        console.log("Success. The user is created in firebase");
-        router.push("/");
-      })
-      .catch((error) => {
-        console.log(error.message);
-        setError("Failed to create account. Please try again.");
-      });
+    // createUserWithEmailAndPassword(email, password)
+    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    //   .then((_authUser) => {
+    //     console.log("Success. The user is created in firebase");
+    //     router.push("/");
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.message);
+    //     setError("Failed to create account. Please try again.");
+    //   });
   };
 
   return (
@@ -98,6 +97,7 @@ const Signup = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                formAction={signup}
               >
                 Sign up
               </button>

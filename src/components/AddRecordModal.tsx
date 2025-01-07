@@ -1,7 +1,7 @@
 "use client";
 
 import { SUBJECTS } from "@/lib/constants";
-import { dateTo24HrTime } from "@/lib/utils/time";
+import { dateTo24HrTime } from "@/utils/helpers/time";
 import { useState } from "react";
 
 const AddRecordModal = () => {

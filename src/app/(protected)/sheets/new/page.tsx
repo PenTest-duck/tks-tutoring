@@ -2,7 +2,7 @@
 
 import AddRecordModal from "@/components/AddRecordModal";
 import Sheet from "@/components/Sheet";
-import { formatDateString, formatTimeString } from "@/lib/utils/time";
+import { formatDateString, formatTimeString } from "@/utils/helpers/time";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";

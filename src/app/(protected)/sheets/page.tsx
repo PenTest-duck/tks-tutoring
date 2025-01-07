@@ -1,6 +1,6 @@
 "use client";
 
-import { dateTo24HrTime } from "@/lib/utils/time";
+import { dateTo24HrTime } from "@/utils/helpers/time";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
