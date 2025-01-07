@@ -16,6 +16,7 @@ interface AuthUserContext {
     password: string
   ) => Promise<UserCredential | void>;
   signOut: () => Promise<void>;
+  sendPasswordResetEmail: (email: string) => Promise<void>;
 }
 
 const authUserContext = createContext({
@@ -24,6 +25,7 @@ const authUserContext = createContext({
   signInWithEmailAndPassword: async () => {},
   createUserWithEmailAndPassword: async () => {},
   signOut: async () => {},
+  sendPasswordResetEmail: async () => {},
 } as AuthUserContext);
 
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {

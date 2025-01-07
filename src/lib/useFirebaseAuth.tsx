@@ -6,6 +6,7 @@ import {
   User,
   createUserWithEmailAndPassword as _createUserWithEmailAndPassword,
   signInWithEmailAndPassword as _signInWithEmailAndPassword,
+  sendPasswordResetEmail as _sendPasswordResetEmail,
   signOut as _signOut,
   setPersistence,
   browserSessionPersistence,
@@ -55,6 +56,9 @@ export default function useFirebaseAuth() {
 
   const signOut = () => _signOut(auth).then(clear);
 
+  const sendPasswordResetEmail = (email: string) =>
+    _sendPasswordResetEmail(auth, email);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authStateChanged);
     setPersistence(auth, browserSessionPersistence).catch((error) => {
@@ -69,5 +73,6 @@ export default function useFirebaseAuth() {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
+    sendPasswordResetEmail,
   };
 }

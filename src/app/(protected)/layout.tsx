@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthUserContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function DefaultLayout({
+export default function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
