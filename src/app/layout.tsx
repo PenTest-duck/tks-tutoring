@@ -16,6 +16,26 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "TKS Tutoring Sheets",
   description: "Sheets for academic tutors at The King's School.",
+  // manifest: "/favicon/site.webmanifest",
+  icons: [
+    {
+      rel: "apple-touch-icon",
+      url: "/favicon/apple-touch-icon.png",
+      sizes: "180x180",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      url: "/favicon/android-chrome-192x192.png",
+      sizes: "192x192",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      url: "/favicon/android-chrome-512x512.png",
+      sizes: "512x512",
+    },
+  ],
 };
 
 export default function RootLayout({

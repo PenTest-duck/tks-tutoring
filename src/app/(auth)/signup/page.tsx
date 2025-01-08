@@ -3,21 +3,28 @@
 import PasswordEye from "@/components/PasswordEye";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { signup } from "./actions";
+import { FormEvent, useState } from "react";
+import { signup } from "@/utils/supabase/authHelpers";
 import { LoaderCircle } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 const Signup = () => {
-  const searchParams = useSearchParams();
-  const [error, setError] = useState(
-    searchParams.get("error_description") ?? ""
-  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
     setIsLoading(true);
     setError("");
+    signup(email, password, firstName, lastName).then((response) => {
+      setIsLoading(false);
+      if (response.error) {
+        setError(response.error);
+      }
+    });
   };
 
   return (
@@ -38,6 +45,46 @@ const Signup = () => {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="flex flex-row space-x-4">
+              <div className="w-1/2">
+                <label
+                  htmlFor="first-name"
+                  className="block text-sm/6 font-medium text-gray-900"
+                >
+                  First name
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="first-name"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+
+              <div className="w-1/2">
+                <label
+                  htmlFor="last-name"
+                  className="block text-sm/6 font-medium text-gray-900"
+                >
+                  Last name
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="last-name"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div>
               <label
                 htmlFor="email"
@@ -50,6 +97,8 @@ const Signup = () => {
                   id="email"
                   name="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
@@ -71,6 +120,8 @@ const Signup = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   minLength={8}
                   required
                   autoComplete="current-password"
@@ -84,7 +135,6 @@ const Signup = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 disabled:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
-                formAction={signup}
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -94,7 +144,7 @@ const Signup = () => {
                 )}
               </button>
               {error && (
-                <p className="mt-2 text-sm text-center text-red-500">{error}</p>
+                <p className="mt-2 text-sm text-center text-error">{error}</p>
               )}
             </div>
           </form>

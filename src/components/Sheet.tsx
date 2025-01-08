@@ -1,4 +1,4 @@
-import SheetRow from "./SheetRow";
+import RecordRow from "./RecordRow";
 
 const Sheet = () => {
   return (
@@ -48,28 +48,28 @@ const Sheet = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                <SheetRow
+                <RecordRow
                   startTime="18:30"
                   endTime="19:30"
                   studentName="Chris Yoo"
                   studentYear={12}
                   subject="Maths"
                 />
-                <SheetRow
+                <RecordRow
                   startTime="18:30"
                   endTime="20:15"
                   studentName="Tommy Maurice"
                   studentYear={12}
                   subject="Business Studies"
                 />
-                <SheetRow
+                <RecordRow
                   startTime="19:20"
                   endTime="22:00"
                   studentName="Cooper Pullen"
                   studentYear={8}
                   subject="English"
                 />
-                <SheetRow
+                <RecordRow
                   startTime="19:30"
                   endTime="20:30"
                   studentName="Rich Estens"

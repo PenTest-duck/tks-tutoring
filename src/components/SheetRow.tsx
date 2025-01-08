@@ -1,109 +1,47 @@
 "use client";
 
-import { SquarePen } from "lucide-react";
-import Image from "next/image";
-import { useRef, useState } from "react";
-import SignatureCanvas from "react-signature-canvas";
+import { formatDateString, formatTimeString } from "@/utils/helpers/time";
+import { useRouter } from "next/navigation";
 
 interface SheetRowProps {
+  id: string;
+  date: string;
   startTime: string;
   endTime: string;
-  studentName: string;
-  studentYear: number;
-  subject: string;
-  signatureDataUrl?: string;
+  location: string;
 }
 
 const SheetRow = ({
+  id,
+  date,
   startTime,
   endTime,
-  studentName,
-  studentYear,
-  subject,
-  signatureDataUrl: signatureDataUrl = "",
+  location,
 }: SheetRowProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [signature, setSignature] = useState<string>(signatureDataUrl);
-  const sigCanvas = useRef<SignatureCanvas>(null);
+  const router = useRouter();
 
-  const handleSave = () => {
-    if (!sigCanvas.current) return;
-    setSignature(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
-    setIsModalOpen(false);
+  const handleClick = () => {
+    router.push(`/sheets/${id}`);
   };
 
   return (
-    <tr>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        {startTime}
+    <tr onClick={handleClick} className="cursor-pointer">
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-neutral-200">
+        {formatDateString(date)}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        {endTime}
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+        {formatTimeString(startTime)} - {formatTimeString(endTime)}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        {studentName}
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+        {location}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        {studentYear}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        {subject}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        <>
-          {signature ? (
-            <Image
-              src={signature}
-              alt={`${studentName}'s signature`}
-              width={96}
-              height={24}
-              style={{ objectFit: "contain", height: "24px", width: "96px" }}
-            />
-          ) : (
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="hover:text-blue-600 transition-colors"
-            >
-              <SquarePen />
-            </button>
-          )}
-
-          {isModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg">
-                <div className="text-center mb-4">
-                  <h2 className="text-lg font-bold">
-                    Sign off - {studentName}
-                  </h2>
-                  <p>
-                    {startTime} - {endTime}, {subject}
-                  </p>
-                </div>
-
-                <div className="border rounded-lg">
-                  <SignatureCanvas
-                    ref={sigCanvas}
-                    canvasProps={{ width: 500, height: 200 }}
-                  />
-                </div>
-                <div className="flex flex-row justify-end mt-4">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    className="px-4 py-2 bg-primary-600 text-white rounded"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+      <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-bold">
+        <button
+          type="button"
+          className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400"
+        >
+          Delete
+        </button>
       </td>
     </tr>
   );

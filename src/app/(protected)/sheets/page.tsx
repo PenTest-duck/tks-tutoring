@@ -1,8 +1,13 @@
 "use client";
 
+import TableSkeleton from "@/components/preline/TableSkeleton";
+import SheetRow from "@/components/SheetRow";
 import { dateTo24HrTime } from "@/utils/helpers/time";
+import { createClient } from "@/utils/supabase/client";
+import { Tables } from "@/utils/types/supabase";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Sheets = () => {
   const getTodayDate = () => new Date().toISOString().split("T")[0];
@@ -19,18 +24,32 @@ const Sheets = () => {
     return dateTo24HrTime(roundedHour);
   };
 
+  const router = useRouter();
+  const supabase = createClient();
+
+  // All sheets
+  const [sheets, setSheets] = useState<Tables<"sheets">[]>([]);
+  const [sheetsIsLoading, setSheetsIsLoading] = useState(true);
+  const [sheetsError, setSheetsError] = useState("");
+
+  // Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [date, setDate] = useState(getTodayDate());
   const [startTime, setStartTime] = useState(getDefaultStartTime());
   const [endTime, setEndTime] = useState(getDefaultEndTime());
   const [location, setLocation] = useState("");
-  const router = useRouter();
+  const [modalValidation, setModalValidation] = useState(false);
+  const [modalIsLoading, setModalIsLoading] = useState(false);
+  const [modalError, setModalError] = useState("");
 
   const resetState = () => {
     setDate(getTodayDate());
     setStartTime(getDefaultStartTime());
     setEndTime(getDefaultEndTime());
     setLocation("");
+    setModalValidation(false);
+    setModalIsLoading(false);
+    setModalError("");
   };
 
   const openModal = () => {
@@ -43,14 +62,69 @@ const Sheets = () => {
     resetState();
   };
 
-  const handleCreate = () => {
-    router.push(
-      `/sheets/new?date=${date}&startTime=${startTime}&endTime=${endTime}&location=${encodeURIComponent(
-        location
-      )}`
-    );
-    closeModal();
+  const handleCreate = async () => {
+    setModalIsLoading(true);
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      setModalIsLoading(false);
+      setModalError(error.message);
+      return;
+    }
+
+    supabase
+      .from("sheets")
+      .insert([
+        {
+          date,
+          start_time: startTime,
+          end_time: endTime,
+          location,
+          user_id: data.session?.user.id,
+        },
+      ])
+      .select("id")
+      .then(({ data, error }) => {
+        setModalIsLoading(false);
+        if (error) {
+          setSheetsError(error.message);
+          return;
+        }
+
+        closeModal();
+        router.push(`/sheets/${data[0].id}`);
+      });
   };
+
+  useEffect(() => {
+    const fetchSheets = async () => {
+      setSheetsIsLoading(true);
+      const { data, error } = await supabase
+        .from("sheets")
+        .select("*")
+        .order("date", { ascending: false })
+        .order("start_time", { ascending: false })
+        .order("end_time", { ascending: false })
+        .limit(10);
+      setSheetsIsLoading(false);
+      if (error) {
+        setSheetsError(error.message);
+        return;
+      }
+
+      setSheets(data);
+    };
+
+    fetchSheets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (date && startTime && endTime && location) {
+      setModalValidation(true);
+    } else {
+      setModalValidation(false);
+    }
+  }, [date, startTime, endTime, location]);
 
   return (
     <div className="flex flex-col p-12">
@@ -162,9 +236,14 @@ const Sheets = () => {
                   </button>
                   <button
                     onClick={handleCreate}
-                    className="px-4 py-2 bg-primary-600 text-white rounded"
+                    className="px-4 py-2 bg-primary-600 disabled:bg-primary-500 text-white rounded"
+                    disabled={!modalValidation}
                   >
-                    Create
+                    {modalIsLoading ? (
+                      <LoaderCircle className="animate-spin" />
+                    ) : (
+                      "Create"
+                    )}
                   </button>
                 </div>
               </div>
@@ -207,25 +286,28 @@ const Sheets = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-neutral-200">
-                      20 Nov 2024
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                      7:00pm - 10:00pm
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                      Macarthur Waddy
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-bold">
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+                  {sheetsIsLoading ? (
+                    <TableSkeleton colSpan={4} />
+                  ) : sheetsError ? (
+                    <tr>
+                      <td colSpan={4}>
+                        <p className="text-center p-4 text-error">
+                          {sheetsError}
+                        </p>
+                      </td>
+                    </tr>
+                  ) : (
+                    sheets.map((sheet) => (
+                      <SheetRow
+                        key={sheet.id}
+                        id={sheet.id}
+                        date={sheet.date}
+                        startTime={sheet.start_time}
+                        endTime={sheet.end_time}
+                        location={sheet.location}
+                      />
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

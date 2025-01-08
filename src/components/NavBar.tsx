@@ -3,25 +3,27 @@
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (!error && session?.user?.email) {
+        setEmail(session.user.email);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const signOut = async () => {
-    const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
   };
-
-  const supabase = createClient();
-  supabase.auth.getUser().then(({ data: { user } }) => {
-    if (user?.email) {
-      setEmail(user.email);
-    }
-  });
 
   return (
     <nav className=" w-full bg-white z-50 max-h-16">
@@ -47,14 +49,20 @@ const NavBar = () => {
               onClick={() => setIsOpen(!isOpen)}
             />
             {isOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                <button
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                  onClick={signOut}
-                >
-                  Sign out
-                </button>
-              </div>
+              <>
+                <div
+                  className="fixed inset-0"
+                  onClick={() => setIsOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                  <button
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    onClick={signOut}
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>

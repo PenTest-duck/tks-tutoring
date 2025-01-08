@@ -2,11 +2,20 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from "react";
 
-const ErrorPage = () => {
+const ErrorMessage = () => {
   const searchParams = useSearchParams();
   const errMsg = searchParams.get("err_msg") || "Unknown error";
 
+  return (
+    <p className="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+      {errMsg}
+    </p>
+  );
+};
+
+const ErrorPage = () => {
   return (
     <>
       <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
@@ -14,9 +23,15 @@ const ErrorPage = () => {
           <h1 className="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
             Oops.. something went wrong
           </h1>
-          <p className="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
-            {errMsg}
-          </p>
+          <Suspense
+            fallback={
+              <p className="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+                Loading...
+              </p>
+            }
+          >
+            <ErrorMessage />
+          </Suspense>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
               href="/"

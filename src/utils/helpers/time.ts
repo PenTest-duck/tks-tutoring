@@ -1,4 +1,4 @@
-export function formatTimeString(time: string | null): string {
+export function formatTimeString(time?: string): string {
   if (!time) return "N/A";
 
   const [hours, minutes] = time.split(":").map(Number);
@@ -20,7 +20,7 @@ export function formatTimeString(time: string | null): string {
   return `${hours12}:${minutes.toString().padStart(2, "0")}${period}`;
 }
 
-export function formatDateString(date: string | null): string {
+export function formatDateString(date?: string): string {
   if (!date) return "N/A";
 
   const dateObj = new Date(date);

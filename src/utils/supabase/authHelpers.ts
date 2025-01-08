@@ -4,6 +4,27 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
+export async function signup(
+  email: string,
+  password: string,
+  firstName: string,
+  lastName: string
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { first_name: firstName, last_name: lastName } },
+  });
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/signup/success", "layout");
+  redirect("/signup/success");
+}
+
 export async function login(
   email: string,
   password: string
