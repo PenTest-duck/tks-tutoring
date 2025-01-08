@@ -1,6 +1,6 @@
 "use client";
 
-import { SUBJECTS } from "@/lib/constants";
+import { SUBJECTS } from "@/constants";
 import { dateTo24HrTime } from "@/utils/helpers/time";
 import { useState } from "react";
 

@@ -3,20 +3,23 @@
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { sendPasswordResetEmail } from "./actions";
+import { sendPasswordResetEmail } from "@/utils/supabase/authHelpers";
 
 const ResetPassword = () => {
-  const searchParams = useSearchParams();
-  const [error, setError] = useState(
-    searchParams.get("error_description") ?? ""
-  );
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = () => {
     setIsLoading(true);
     setError("");
+    sendPasswordResetEmail(email).then((response) => {
+      setIsLoading(false);
+      if (response.error) {
+        setError(response.error);
+      }
+    });
   };
 
   return (
@@ -49,6 +52,8 @@ const ResetPassword = () => {
                   id="email"
                   name="email"
                   type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   required
                   autoComplete="email"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
@@ -60,7 +65,6 @@ const ResetPassword = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
-                formAction={sendPasswordResetEmail}
               >
                 {isLoading ? <LoaderCircle className="animate-spin" /> : "Send"}
               </button>

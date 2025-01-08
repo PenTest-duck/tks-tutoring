@@ -5,15 +5,22 @@ import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { changePassword } from "./actions";
+import { changePassword } from "@/utils/supabase/authHelpers";
 
 const ChangePassword = () => {
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = () => {
     setIsLoading(true);
     setError("");
+    changePassword(password).then((response) => {
+      setIsLoading(false);
+      if (response.error) {
+        setError(response.error);
+      }
+    });
   };
 
   return (
@@ -48,6 +55,8 @@ const ChangePassword = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                   minLength={8}
                   required
                   autoComplete="current-password"
@@ -61,7 +70,6 @@ const ChangePassword = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
-                formAction={changePassword}
               >
                 {isLoading && <LoaderCircle className="animate-spin mr-2" />}
                 Change password

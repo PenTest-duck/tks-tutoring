@@ -40,7 +40,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user && !request.nextUrl.pathname.startsWith("/sheets")) {
+  if (
+    user &&
+    !request.nextUrl.pathname.startsWith("/sheets") &&
+    !request.nextUrl.pathname.startsWith("/error")
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/sheets";
     return NextResponse.redirect(url);
@@ -48,6 +52,7 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
+    !request.nextUrl.pathname.startsWith("/error") &&
     !request.nextUrl.pathname.startsWith("/resetpassword") &&
     !request.nextUrl.pathname.startsWith("/signup") &&
     !request.nextUrl.pathname.startsWith("/login") &&

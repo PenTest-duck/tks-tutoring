@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState("");
   const router = useRouter();
 
   const signOut = async () => {
@@ -14,6 +15,13 @@ const NavBar = () => {
     await supabase.auth.signOut();
     router.push("/login");
   };
+
+  const supabase = createClient();
+  supabase.auth.getUser().then(({ data: { user } }) => {
+    if (user?.email) {
+      setEmail(user.email);
+    }
+  });
 
   return (
     <nav className=" w-full bg-white z-50 max-h-16">
@@ -28,7 +36,7 @@ const NavBar = () => {
           <h1 className="text-xl font-bold">TKS Tutoring</h1>
         </div>
         <div className="flex flex-row items-center space-x-4 relative">
-          <p>Chris Yoo</p>
+          <p>{email}</p>
           <div className="relative">
             <Image
               src="/images/bot_pfp.png"
