@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
 
 export async function login(formData: FormData) {
@@ -16,11 +15,10 @@ export async function login(formData: FormData) {
   };
 
   const { error } = await supabase.auth.signInWithPassword(data);
-
   if (error) {
-    redirect("/error");
+    redirect("/login?error_description=" + encodeURIComponent(error.message));
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/sheets", "layout");
+  redirect("/sheets");
 }

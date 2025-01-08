@@ -1,32 +1,25 @@
+"use client";
+
 import PasswordEye from "@/components/PasswordEye";
-import { useAuth } from "@/context/AuthUserContext";
 import Image from "next/image";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { signup } from "./actions";
+import { useState } from "react";
+import { login } from "./actions";
+import { useSearchParams } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
 
-const Signup = () => {
+const Login = () => {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const router = useRouter();
-  const [error, setError] = useState("");
-  const { createUserWithEmailAndPassword } = useAuth();
+  const [error, setError] = useState(
+    searchParams.get("error_description") ?? ""
+  );
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = () => {
+    setIsLoading(true);
     setError("");
-
-    // createUserWithEmailAndPassword(email, password)
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   .then((_authUser) => {
-    //     console.log("Success. The user is created in firebase");
-    //     router.push("/");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error.message);
-    //     setError("Failed to create account. Please try again.");
-    //   });
   };
 
   return (
@@ -41,7 +34,7 @@ const Signup = () => {
             height={64}
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Create an account
+            Sign in to your account
           </h2>
         </div>
 
@@ -76,18 +69,25 @@ const Signup = () => {
                 >
                   Password
                 </label>
+                <div className="text-sm">
+                  <Link
+                    href="/resetpassword"
+                    className="font-semibold text-primary-600 hover:text-primary-500"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
               <div className="relative mt-2">
                 <input
                   id="password"
                   name="password"
                   type="password"
-                  minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 pe-10 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
                 />
                 <PasswordEye passwordId="password" />
               </div>
@@ -97,9 +97,13 @@ const Signup = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
-                formAction={signup}
+                formAction={login}
               >
-                Sign up
+                {isLoading ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  "Sign in"
+                )}
               </button>
               {error && (
                 <p className="mt-2 text-sm text-center text-red-500">{error}</p>
@@ -108,12 +112,12 @@ const Signup = () => {
           </form>
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Already have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
-              href="/login"
+              href="/signup"
               className="font-semibold text-primary-600 hover:text-primary-500"
             >
-              Sign in here.
+              Sign up here.
             </Link>
           </p>
         </div>
@@ -122,4 +126,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;

@@ -1,19 +1,18 @@
 "use client";
 
-import { useAuth } from "@/context/AuthUserContext";
+import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { signOut: _signOut } = useAuth();
   const router = useRouter();
 
-  const signOut = () => {
-    _signOut()
-      .then(() => router.push("/login"))
-      .catch((error) => console.log(error));
+  const signOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
   };
 
   return (
@@ -45,7 +44,7 @@ const NavBar = () => {
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   onClick={signOut}
                 >
-                  Logout
+                  Sign out
                 </button>
               </div>
             )}
