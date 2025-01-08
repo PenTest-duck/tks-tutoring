@@ -28,7 +28,12 @@ const Sheets = () => {
   const supabase = createClient();
 
   // All sheets
-  const [sheets, setSheets] = useState<Tables<"sheets">[]>([]);
+  const [sheets, setSheets] = useState<
+    Pick<
+      Tables<"sheets">,
+      "id" | "date" | "start_time" | "end_time" | "location"
+    >[]
+  >([]);
   const [sheetsIsLoading, setSheetsIsLoading] = useState(true);
   const [sheetsError, setSheetsError] = useState("");
 
@@ -100,7 +105,7 @@ const Sheets = () => {
       setSheetsIsLoading(true);
       const { data, error } = await supabase
         .from("sheets")
-        .select("*")
+        .select("id, date, start_time, end_time, location")
         .order("date", { ascending: false })
         .order("start_time", { ascending: false })
         .order("end_time", { ascending: false })

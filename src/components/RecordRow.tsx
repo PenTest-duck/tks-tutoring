@@ -1,44 +1,56 @@
 "use client";
 
+import { formatTimeString } from "@/utils/helpers/time";
+import { createClient } from "@/utils/supabase/client";
 import { SquarePen } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 
 interface RecordRowProps {
+  id: string;
   startTime: string;
-  endTime: string;
+  endTime: string | null;
   studentName: string;
-  studentYear: number;
+  studentYear: number | null;
   subject: string;
-  signatureDataUrl?: string;
+  signature?: string;
 }
 
 const RecordRow = ({
+  id,
   startTime,
   endTime,
   studentName,
   studentYear,
   subject,
-  signatureDataUrl: signatureDataUrl = "",
+  signature,
 }: RecordRowProps) => {
+  const supabase = createClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [signature, setSignature] = useState<string>(signatureDataUrl);
   const sigCanvas = useRef<SignatureCanvas>(null);
 
   const handleSave = () => {
     if (!sigCanvas.current) return;
-    setSignature(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
-    setIsModalOpen(false);
+    const signatureDataUrl = sigCanvas.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    supabase
+      .from("records")
+      .update({ signature: signatureDataUrl })
+      .eq("id", id)
+      .then(() => {
+        setIsModalOpen(false);
+      });
   };
 
   return (
     <tr>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        {startTime}
+        {formatTimeString(startTime)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-        {endTime}
+        {formatTimeString(endTime)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
         {studentName}
@@ -76,7 +88,8 @@ const RecordRow = ({
                     Sign off - {studentName}
                   </h2>
                   <p>
-                    {startTime} - {endTime}, {subject}
+                    {formatTimeString(startTime)} - {formatTimeString(endTime)},{" "}
+                    {subject}
                   </p>
                 </div>
 

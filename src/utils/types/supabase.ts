@@ -27,13 +27,59 @@ export type Database = {
         }
         Relationships: []
       }
+      records: {
+        Row: {
+          created_at: string
+          end_time: string | null
+          id: string
+          sheet_id: string
+          signature: string | null
+          start_time: string
+          student_name: string
+          student_year: number | null
+          subject_area: string
+        }
+        Insert: {
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          sheet_id: string
+          signature?: string | null
+          start_time: string
+          student_name: string
+          student_year?: number | null
+          subject_area: string
+        }
+        Update: {
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          sheet_id?: string
+          signature?: string | null
+          start_time?: string
+          student_name?: string
+          student_year?: number | null
+          subject_area?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "records_sheet_id_fkey"
+            columns: ["sheet_id"]
+            isOneToOne: false
+            referencedRelation: "sheets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sheets: {
         Row: {
           created_at: string | null
           date: string
           end_time: string
+          finished: boolean
           id: string
           location: string
+          signature: string | null
           start_time: string
           user_id: string | null
         }
@@ -41,8 +87,10 @@ export type Database = {
           created_at?: string | null
           date: string
           end_time: string
+          finished?: boolean
           id?: string
           location: string
+          signature?: string | null
           start_time: string
           user_id?: string | null
         }
@@ -50,8 +98,10 @@ export type Database = {
           created_at?: string | null
           date?: string
           end_time?: string
+          finished?: boolean
           id?: string
           location?: string
+          signature?: string | null
           start_time?: string
           user_id?: string | null
         }

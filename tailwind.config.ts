@@ -17,6 +17,7 @@ export default {
         foreground: "var(--foreground)",
         primary: colors.indigo,
         error: "#ef4444", // red-500
+        disabled: "#9cafa3", // gray-400
       },
     },
   },
