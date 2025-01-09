@@ -4,6 +4,7 @@ import Image from "next/image";
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const VerifyButton = () => {
   const searchParams = useSearchParams();
@@ -55,7 +56,9 @@ const SignupVerify = () => {
             height={64}
           />
           <div className="mt-4 text-center">
-            <VerifyButton />
+            <Suspense>
+              <VerifyButton />
+            </Suspense>
           </div>
         </div>
       </div>
