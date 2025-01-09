@@ -190,7 +190,7 @@ const AddSheetModal = () => {
 
             <div className="flex flex-row justify-between items-center mt-4">
               <p className="w-1/2 text-xs text-gray-400">
-                End time will be filled automatically when you finish the shift.
+                End time will be filled when you finish the shift.
               </p>
               <div>
                 <button onClick={closeModal} className="px-4 py-2">
