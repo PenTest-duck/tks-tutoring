@@ -148,7 +148,7 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
           Back to all sheets
         </Link>
       </div>
-      <div className="flex flex-row items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
         <h2 className="text-3xl font-bold">
           {sheet && (sheet.finished ? "Completed sheet" : "Draft sheet")}
         </h2>
@@ -166,13 +166,14 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
       <Sheet records={records} isLoading={isLoading} error={error} />
 
       {sheet && !sheet?.finished && (
-        <div className="mt-8 flex flex-row w-full justify-between">
+        <div className="mt-8 flex flex-col-reverse gap-4 sm:flex-row w-full justify-between">
           <FinishShiftModal
             sheetId={sheet?.id ?? ""}
             date={sheet?.date ?? ""}
             startTime={sheet?.start_time ?? ""}
             endTime={sheet?.end_time}
             location={sheet?.location ?? ""}
+            numRecords={records.length}
           />
           <AddRecordModal sheetId={sheet?.id ?? ""} />
         </div>

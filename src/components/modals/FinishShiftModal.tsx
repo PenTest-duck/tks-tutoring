@@ -18,6 +18,7 @@ interface FinishShiftModalProps {
   startTime: string;
   endTime?: string | null;
   location: string;
+  numRecords?: number;
 }
 
 const FinishShiftModal = ({
@@ -26,6 +27,7 @@ const FinishShiftModal = ({
   startTime,
   endTime,
   location,
+  numRecords,
 }: FinishShiftModalProps) => {
   const supabase = createClient();
   const router = useRouter();
@@ -86,16 +88,19 @@ const FinishShiftModal = ({
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
         >
           <div className="bg-white dark:bg-gray-800 p-6 border rounded-lg w-full md:w-auto md:min-w-[500px]">
-            <h2 className="text-center text-lg font-bold mb-4">Finish shift</h2>
+            <h2 className="text-center text-lg font-bold">Finish shift</h2>
 
             <div className="flex flex-col space-y-4">
-              <p className="text-center">
-                {location} · {formatDateString(date)} ·{" "}
-                {formatTimeString(startTime)} -{" "}
-                {endTime
-                  ? formatTimeString(endTime)
-                  : formatTimeString(currentTime)}
-              </p>
+              <div className="text-center">
+                <p>
+                  {location} · {formatDateString(date)} ·{" "}
+                  {formatTimeString(startTime)} -{" "}
+                  {endTime
+                    ? formatTimeString(endTime)
+                    : formatTimeString(currentTime)}
+                </p>
+                <p>{numRecords ?? 0} records</p>
+              </div>
 
               <div>
                 <label
@@ -113,20 +118,25 @@ const FinishShiftModal = ({
               </div>
             </div>
 
-            <div className="flex flex-row justify-end mt-4">
-              <button onClick={closeModal} className="px-4 py-2">
-                Cancel
-              </button>
-              <button
-                onClick={handleFinish}
-                className="px-4 py-2 bg-primary-600 text-white rounded"
-              >
-                {isLoading ? (
-                  <LoaderCircle className="animate-spin" />
-                ) : (
-                  "Finish"
-                )}
-              </button>
+            <div className="flex flex-row justify-between items-center mt-4">
+              <p className="w-1/2 text-xs text-gray-400">
+                You cannot edit the sheet afterwards.
+              </p>
+              <div>
+                <button onClick={closeModal} className="px-4 py-2">
+                  Cancel
+                </button>
+                <button
+                  onClick={handleFinish}
+                  className="px-4 py-2 bg-primary-600 text-white rounded"
+                >
+                  {isLoading ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    "Finish"
+                  )}
+                </button>
+              </div>
             </div>
             {error && <p className="mt-2 text-center text-error">{error}</p>}
           </div>

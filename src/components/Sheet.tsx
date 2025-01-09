@@ -46,7 +46,7 @@ const Sheet = ({
                     scope="col"
                     className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
                   >
-                    Student&apos;s name
+                    Student name
                   </th>
                   <th
                     scope="col"
@@ -64,7 +64,7 @@ const Sheet = ({
                     scope="col"
                     className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
                   >
-                    Student&apos;s signature
+                    Student signature
                   </th>
                 </tr>
               </thead>

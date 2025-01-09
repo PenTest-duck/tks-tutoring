@@ -79,7 +79,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
         onClick={openModal}
         className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded"
       >
-        Add new record
+        Add record
       </button>
 
       {isModalOpen && (

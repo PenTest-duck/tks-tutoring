@@ -91,7 +91,7 @@ const AddSheetModal = () => {
     <>
       <button
         onClick={openModal}
-        className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded"
+        className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded"
       >
         Create new sheet
       </button>
