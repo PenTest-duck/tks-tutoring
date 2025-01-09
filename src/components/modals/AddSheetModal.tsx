@@ -188,21 +188,26 @@ const AddSheetModal = () => {
               </div>
             </div>
 
-            <div className="flex flex-row justify-end mt-4">
-              <button onClick={closeModal} className="px-4 py-2">
-                Cancel
-              </button>
-              <button
-                onClick={handleCreate}
-                className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded"
-                disabled={!isValidated}
-              >
-                {isLoading ? (
-                  <LoaderCircle className="animate-spin" />
-                ) : (
-                  "Create"
-                )}
-              </button>
+            <div className="flex flex-row justify-between items-center mt-4">
+              <p className="w-1/2 text-xs text-gray-400">
+                End time will be filled automatically when you finish the shift.
+              </p>
+              <div>
+                <button onClick={closeModal} className="px-4 py-2">
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreate}
+                  className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded"
+                  disabled={!isValidated}
+                >
+                  {isLoading ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    "Create"
+                  )}
+                </button>
+              </div>
             </div>
             {error && <p className="mt-2 text-center text-error">{error}</p>}
           </div>

@@ -202,17 +202,27 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
               </div>
             </div>
 
-            <div className="flex flex-row justify-end mt-4">
-              <button onClick={closeModal} className="px-4 py-2">
-                Cancel
-              </button>
-              <button
-                onClick={handleAdd}
-                className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded"
-                disabled={!isValidated}
-              >
-                {isLoading ? <LoaderCircle className="animate-spin" /> : "Add"}
-              </button>
+            <div className="flex flex-row justify-between mt-4">
+              <p className="w-1/2 text-xs text-gray-400">
+                End time will be filled automatically when the student signs
+                off.
+              </p>
+              <div>
+                <button onClick={closeModal} className="px-4 py-2">
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAdd}
+                  className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded"
+                  disabled={!isValidated}
+                >
+                  {isLoading ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    "Add"
+                  )}
+                </button>
+              </div>
             </div>
             {error && <p className="mt-2 text-center text-error">{error}</p>}
           </div>
