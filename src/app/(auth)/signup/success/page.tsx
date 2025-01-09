@@ -19,7 +19,8 @@ const SignupSuccess = () => {
           </h2>
 
           <p className="text-center text-gray-500">
-            Please check your inbox and verify your email.
+            Please check your inbox and verify your email. It may take a couple
+            of minutes, and may be in the junk/spam folder.
           </p>
         </div>
       </div>

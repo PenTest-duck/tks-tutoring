@@ -19,7 +19,8 @@ const SendPasswordResetEmailSuccess = () => {
           </h2>
 
           <p className="text-center text-gray-500">
-            Please check your inbox and follow the instructions.
+            Please check your inbox and follow the instructions. It may take a
+            couple of minutes, and may be in the junk/spam folder.
           </p>
         </div>
       </div>
