@@ -1,33 +1,26 @@
 "use client";
 
-import PasswordEye from "@/components/PasswordEye";
-import { useAuth } from "@/context/AuthUserContext";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { sendPasswordResetEmail } from "@/utils/supabase/authHelpers";
 
-const Signup = () => {
+const ResetPassword = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
   const [error, setError] = useState("");
-  const { createUserWithEmailAndPassword } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     setError("");
-
-    createUserWithEmailAndPassword(email, password)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .then((_authUser) => {
-        console.log("Success. The user is created in firebase");
-        router.push("/");
-      })
-      .catch((error) => {
-        console.log(error.message);
-        setError("Failed to create account. Please try again.");
-      });
+    sendPasswordResetEmail(email).then((response) => {
+      setIsLoading(false);
+      if (response.error) {
+        setError(response.error);
+      }
+    });
   };
 
   return (
@@ -42,7 +35,7 @@ const Signup = () => {
             height={64}
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Create an account
+            Send password reset email
           </h2>
         </div>
 
@@ -61,7 +54,7 @@ const Signup = () => {
                   name="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                   required
                   autoComplete="email"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
@@ -70,39 +63,15 @@ const Signup = () => {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium text-gray-900"
-                >
-                  Password
-                </label>
-              </div>
-              <div className="relative mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  minLength={8}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 pe-10 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
-                />
-                <PasswordEye passwordId="password" />
-              </div>
-            </div>
-
-            <div>
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                disabled={isLoading}
               >
-                Sign up
+                {isLoading ? <LoaderCircle className="animate-spin" /> : "Send"}
               </button>
               {error && (
-                <p className="mt-2 text-sm text-center text-red-500">{error}</p>
+                <p className="mt-2 text-sm text-center text-error">{error}</p>
               )}
             </div>
           </form>
@@ -122,4 +91,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default ResetPassword;

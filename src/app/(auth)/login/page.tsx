@@ -1,38 +1,28 @@
 "use client";
 
 import PasswordEye from "@/components/PasswordEye";
-import { useAuth } from "@/context/AuthUserContext";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { login } from "@/utils/supabase/authHelpers";
+import { LoaderCircle } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
-  const { signInWithEmailAndPassword } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (event: FormEvent) => {
-    setError("");
-    signInWithEmailAndPassword(email, password)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .then((_authUser) => {
-        router.push("/sheets");
-      })
-      .catch((error) => {
-        switch (error.code) {
-          case "auth/invalid-email":
-          case "auth/invalid-credential":
-            setError("Incorrect email and/or password");
-            break;
-          default:
-            console.log(error.message);
-            setError("An unexpected error occurred. Please try again.");
-        }
-      });
     event.preventDefault();
+    setIsLoading(true);
+    setError("");
+    login(email, password).then((response) => {
+      setIsLoading(false);
+      if (response.error) {
+        setError(response.error);
+      }
+    });
   };
 
   return (
@@ -110,11 +100,16 @@ const Login = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                disabled={isLoading}
               >
-                Sign in
+                {isLoading ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  "Sign in"
+                )}
               </button>
               {error && (
-                <p className="mt-2 text-sm text-center text-red-500">{error}</p>
+                <p className="mt-2 text-sm text-center text-error">{error}</p>
               )}
             </div>
           </form>

@@ -1,6 +1,27 @@
-import SheetRow from "./SheetRow";
+import { Tables } from "@/utils/types/supabase";
+import RecordRow from "./RecordRow";
+import TableSkeleton from "./preline/TableSkeleton";
 
-const Sheet = () => {
+interface SheetProps {
+  records?: Pick<
+    Tables<"records">,
+    | "id"
+    | "start_time"
+    | "end_time"
+    | "student_name"
+    | "student_year"
+    | "subject_area"
+    | "signature"
+  >[];
+  isLoading?: boolean;
+  error?: string;
+}
+
+const Sheet = ({
+  records: records = [],
+  isLoading: isLoading = false,
+  error,
+}: SheetProps) => {
   return (
     <div className="min-w-full flex flex-col">
       <div className="-m-1.5 overflow-x-auto">
@@ -48,34 +69,34 @@ const Sheet = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                <SheetRow
-                  startTime="18:30"
-                  endTime="19:30"
-                  studentName="Chris Yoo"
-                  studentYear={12}
-                  subject="Maths"
-                />
-                <SheetRow
-                  startTime="18:30"
-                  endTime="20:15"
-                  studentName="Tommy Maurice"
-                  studentYear={12}
-                  subject="Business Studies"
-                />
-                <SheetRow
-                  startTime="19:20"
-                  endTime="22:00"
-                  studentName="Cooper Pullen"
-                  studentYear={8}
-                  subject="English"
-                />
-                <SheetRow
-                  startTime="19:30"
-                  endTime="20:30"
-                  studentName="Rich Estens"
-                  studentYear={11}
-                  subject="TAFE"
-                />
+                {isLoading ? (
+                  <TableSkeleton colSpan={6} />
+                ) : error ? (
+                  <tr>
+                    <td colSpan={6} className="text-center text-error py-4">
+                      {error}
+                    </td>
+                  </tr>
+                ) : records.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center text-disabled py-4">
+                      No records to show
+                    </td>
+                  </tr>
+                ) : (
+                  records.map((record) => (
+                    <RecordRow
+                      key={record.id}
+                      id={record.id}
+                      startTime={record.start_time}
+                      endTime={record.end_time}
+                      studentName={record.student_name}
+                      studentYear={record.student_year}
+                      subject={record.subject_area}
+                      signature={record.signature ?? ""}
+                    />
+                  ))
+                )}
               </tbody>
             </table>
           </div>

@@ -1,19 +1,32 @@
 "use client";
 
-import { SUBJECTS } from "@/lib/constants";
-import { dateTo24HrTime } from "@/lib/utils/time";
-import { useState } from "react";
+import { SUBJECTS } from "@/constants";
+import { dateTo24HrTime } from "@/utils/helpers/time";
+import { createClient } from "@/utils/supabase/client";
+import { LoaderCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const AddRecordModal = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+interface AddRecordModalProps {
+  sheetId: string;
+}
+
+const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
+  const supabase = createClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [startTime, setStartTime] = useState(dateTo24HrTime(new Date()));
   const [endTime, setEndTime] = useState("");
-  const [year, setYear] = useState("");
+  const [studentName, setStudentName] = useState("");
+  const [studentYear, setStudentYear] = useState("");
   const [subject, setSubject] = useState("");
+  const [isValidated, setIsValidated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const resetState = () => {
     setStartTime(dateTo24HrTime(new Date()));
     setEndTime("");
+    setStudentYear("");
+    setSubject("");
   };
 
   const openModal = () => {
@@ -27,8 +40,38 @@ const AddRecordModal = () => {
   };
 
   const handleAdd = () => {
-    closeModal();
+    setIsLoading(true);
+    supabase
+      .from("records")
+      .insert([
+        {
+          sheet_id: sheetId,
+          start_time: startTime,
+          end_time: endTime || null,
+          student_name: studentName,
+          student_year: parseInt(studentYear),
+          subject_area: subject,
+          signature: "",
+        },
+      ])
+      .then(({ error }) => {
+        setIsLoading(false);
+        if (error) {
+          setError(error.message);
+          return;
+        }
+
+        closeModal();
+      });
   };
+
+  useEffect(() => {
+    if (startTime && studentName && studentYear && subject) {
+      setIsValidated(true);
+    } else {
+      setIsValidated(false);
+    }
+  }, [startTime, studentName, studentYear, subject]);
 
   return (
     <>
@@ -55,7 +98,7 @@ const AddRecordModal = () => {
 
             <div className="flex flex-col space-y-4">
               <div className="flex flex-row space-x-4">
-                <div className="w-1/2">
+                <div className="w-full">
                   <label
                     htmlFor="start-time-input"
                     className="block text-sm font-medium mb-2 dark:text-white"
@@ -72,7 +115,7 @@ const AddRecordModal = () => {
                     required
                   />
                 </div>
-                <div className="w-1/2">
+                {/* <div className="w-1/2">
                   <label
                     htmlFor="end-time-input"
                     className="block text-sm font-medium mb-2 dark:text-white"
@@ -87,7 +130,7 @@ const AddRecordModal = () => {
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="flex flex-row justify-between space-x-4">
@@ -103,7 +146,10 @@ const AddRecordModal = () => {
                     id="name-input"
                     className="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                     placeholder="Name"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
                     required
+                    autoComplete="off"
                   />
                 </div>
 
@@ -117,11 +163,11 @@ const AddRecordModal = () => {
                   <select
                     id="year-input"
                     className="py-3 px-4 pe-9 block w-18 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
+                    value={studentYear}
+                    onChange={(e) => setStudentYear(e.target.value)}
                     required
                   >
-                    <option></option>
+                    <option value=""></option>
                     <option>7</option>
                     <option>8</option>
                     <option>9</option>
@@ -146,7 +192,7 @@ const AddRecordModal = () => {
                   onChange={(e) => setSubject(e.target.value)}
                   required
                 >
-                  <option></option>
+                  <option value=""></option>
                   {SUBJECTS.map((subject) => (
                     <option key={subject} value={subject}>
                       {subject}
@@ -162,11 +208,13 @@ const AddRecordModal = () => {
               </button>
               <button
                 onClick={handleAdd}
-                className="px-4 py-2 bg-primary-600 text-white rounded"
+                className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded"
+                disabled={!isValidated}
               >
-                Add
+                {isLoading ? <LoaderCircle className="animate-spin" /> : "Add"}
               </button>
             </div>
+            {error && <p className="mt-2 text-center text-error">{error}</p>}
           </div>
         </div>
       )}

@@ -1,32 +1,27 @@
 "use client";
 
-import { useAuth } from "@/context/AuthUserContext";
+import PasswordEye from "@/components/PasswordEye";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { changePassword } from "@/utils/supabase/authHelpers";
 
-const ResetPassword = () => {
-  const [email, setEmail] = useState("");
+const ChangePassword = () => {
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const { sendPasswordResetEmail } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     setError("");
-    setSuccess(false);
-    sendPasswordResetEmail(email)
-      .then(() => setSuccess(true))
-      .catch((error) => {
-        switch (error.code) {
-          case "auth/invalid-email":
-            setError("Invalid email address");
-            break;
-          default:
-            console.log(error.message);
-            setError("An unexpected error occurred. Please try again.");
-        }
-      });
+    changePassword(password).then((response) => {
+      setIsLoading(false);
+      if (response.error) {
+        setError(response.error);
+      }
+    });
   };
 
   return (
@@ -48,23 +43,27 @@ const ResetPassword = () => {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                Email address
-              </label>
-              <div className="mt-2">
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-sm/6 font-medium text-gray-900"
+                >
+                  New password
+                </label>
+              </div>
+              <div className="relative mt-2">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  minLength={8}
                   required
-                  autoComplete="email"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
+                  autoComplete="current-password"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 pe-10 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 sm:text-sm/6"
                 />
+                <PasswordEye passwordId="password" />
               </div>
             </div>
 
@@ -72,16 +71,13 @@ const ResetPassword = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                disabled={isLoading}
               >
-                Send password reset email
+                {isLoading && <LoaderCircle className="animate-spin mr-2" />}
+                Change password
               </button>
               {error && (
-                <p className="mt-2 text-sm text-center text-red-500">{error}</p>
-              )}
-              {success && (
-                <p className="mt-2 text-sm text-center text-primary-600">
-                  If account exists, a reset email has been sent.
-                </p>
+                <p className="mt-2 text-sm text-center text-error">{error}</p>
               )}
             </div>
           </form>
@@ -101,4 +97,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default ChangePassword;
