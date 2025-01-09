@@ -155,9 +155,10 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
         <p>
           {!isLoading && (
             <span>
-              {sheet?.location} · {formatDateString(sheet?.date)} ·{" "}
-              {formatTimeString(sheet?.start_time)} -{" "}
-              {formatTimeString(sheet?.end_time)}
+              {sheet?.location} · {formatDateString(sheet?.date)} · Started{" "}
+              {formatTimeString(sheet?.start_time)}
+              {/* -{" "}
+              {formatTimeString(sheet?.end_time)} */}
             </span>
           )}
         </p>

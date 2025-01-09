@@ -1,7 +1,6 @@
 "use client";
 
 import { formatTimeString } from "@/utils/helpers/time";
-import { SquarePen } from "lucide-react";
 import Image from "next/image";
 import SignRecordModal from "./modals/SignRecordModal";
 import { useState } from "react";
@@ -57,9 +56,9 @@ const RecordRow = ({
           ) : (
             <button
               onClick={() => setIsModalOpen(true)}
-              className="hover:text-blue-600 transition-colors"
+              className="font-bold text-primary-600 hover:text-indigo-400 transition-colors"
             >
-              <SquarePen />
+              Sign off
             </button>
           )}
 

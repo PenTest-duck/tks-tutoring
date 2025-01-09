@@ -1,6 +1,6 @@
 "use client";
 
-import { dateTo24HrTime, getCurrentRoundedHour } from "@/utils/helpers/time";
+import { dateTo24HrTime } from "@/utils/helpers/time";
 import { createClient } from "@/utils/supabase/client";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -8,18 +8,18 @@ import { useEffect, useState } from "react";
 
 const AddSheetModal = () => {
   const getTodayDate = () => new Date().toISOString().split("T")[0];
-  const getDefaultStartTime = () => dateTo24HrTime(getCurrentRoundedHour());
-  const getDefaultEndTime = () => {
-    const roundedHour = getCurrentRoundedHour();
-    roundedHour.setHours(roundedHour.getHours() + 3);
-    return dateTo24HrTime(roundedHour);
-  };
+  const getDefaultStartTime = () => dateTo24HrTime(new Date()); // getCurrentRoundedHour());
+  // const getDefaultEndTime = () => {
+  //   const roundedHour = getCurrentRoundedHour();
+  //   roundedHour.setHours(roundedHour.getHours() + 3);
+  //   return dateTo24HrTime(roundedHour);
+  // };
 
   const router = useRouter();
   const supabase = createClient();
   const [date, setDate] = useState(getTodayDate());
   const [startTime, setStartTime] = useState(getDefaultStartTime());
-  const [endTime, setEndTime] = useState(getDefaultEndTime());
+  const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
@@ -29,7 +29,7 @@ const AddSheetModal = () => {
   const resetState = () => {
     setDate(getTodayDate());
     setStartTime(getDefaultStartTime());
-    setEndTime(getDefaultEndTime());
+    setEndTime("");
     setLocation("");
     setIsValidated(false);
     setIsLoading(false);
@@ -80,12 +80,13 @@ const AddSheetModal = () => {
   };
 
   useEffect(() => {
-    if (date && startTime && endTime && location) {
+    if (date && startTime && location) {
+      // && endTime
       setIsValidated(true);
     } else {
       setIsValidated(false);
     }
-  }, [date, startTime, endTime, location]);
+  }, [date, startTime, location]);
 
   return (
     <>

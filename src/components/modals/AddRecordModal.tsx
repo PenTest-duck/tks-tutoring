@@ -25,6 +25,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
   const resetState = () => {
     setStartTime(dateTo24HrTime(new Date()));
     setEndTime("");
+    setStudentName("");
     setStudentYear("");
     setSubject("");
   };
