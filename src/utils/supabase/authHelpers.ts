@@ -3,6 +3,29 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { jwtVerify } from "jose";
+
+export const getRole = async () => {
+  const supabase = await createClient();
+
+  try {
+    const token = (await supabase.auth.getSession()).data.session?.access_token;
+    if (token) {
+      const verifiedToken = await jwtVerify(
+        token,
+        new TextEncoder().encode(process.env.NEXT_PUBLIC_SUPABASE_JWT_SECRET)
+      );
+      if (verifiedToken) {
+        const payloadBase64 = token.split(".")[1];
+        const decodedPayload = Buffer.from(payloadBase64, "base64").toString();
+        const userRole = JSON.parse(decodedPayload).user_role;
+        return userRole;
+      }
+    }
+  } catch (error) {
+    console.error("Error decoding token or fetching user role:", error);
+  }
+};
 
 export async function signup(
   email: string,

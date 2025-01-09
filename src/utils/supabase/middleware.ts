@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getRole } from "./authHelpers";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -40,28 +41,43 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (
-    user &&
-    !request.nextUrl.pathname.startsWith("/sheets") &&
-    !request.nextUrl.pathname.startsWith("/error")
-  ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/sheets";
-    return NextResponse.redirect(url);
-  }
+  if (user) {
+    // Authenticated
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/error") &&
-    !request.nextUrl.pathname.startsWith("/resetpassword") &&
-    !request.nextUrl.pathname.startsWith("/signup") &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    if (request.nextUrl.pathname.startsWith("/admin")) {
+      const role = await getRole();
+      if (role === "admin") {
+        // Authorised
+        return supabaseResponse;
+      } else {
+        // Unauthorised
+        const url = request.nextUrl.clone();
+        url.pathname = "/sheets";
+        return NextResponse.redirect(url);
+      }
+    }
+
+    if (
+      !request.nextUrl.pathname.startsWith("/sheets") &&
+      !request.nextUrl.pathname.startsWith("/error")
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/sheets";
+      return NextResponse.redirect(url);
+    }
+  } else {
+    // Unauthenticated
+    if (
+      !request.nextUrl.pathname.startsWith("/error") &&
+      !request.nextUrl.pathname.startsWith("/resetpassword") &&
+      !request.nextUrl.pathname.startsWith("/signup") &&
+      !request.nextUrl.pathname.startsWith("/login") &&
+      !request.nextUrl.pathname.startsWith("/auth")
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

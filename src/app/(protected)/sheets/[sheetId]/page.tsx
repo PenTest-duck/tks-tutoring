@@ -142,10 +142,10 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
       <div className="self-start">
         <Link
           href="/sheets"
-          className="flex flex-row text-primary-600 hover:text-primary-700"
+          className="flex flex-row items-center text-primary-600 hover:text-primary-500"
         >
-          <ChevronLeft />
-          Back to all sheets
+          <ChevronLeft className="-ml-1" />
+          My sheets
         </Link>
       </div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">

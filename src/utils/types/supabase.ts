@@ -14,29 +14,21 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
-          role_id: string | null
+          role: Database["public"]["Enums"]["role_type"]
         }
         Insert: {
           first_name?: string | null
           id: string
           last_name?: string | null
-          role_id?: string | null
+          role?: Database["public"]["Enums"]["role_type"]
         }
         Update: {
           first_name?: string | null
           id?: string
           last_name?: string | null
-          role_id?: string | null
+          role?: Database["public"]["Enums"]["role_type"]
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_role_id_fkey"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "roles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       records: {
         Row: {
@@ -82,21 +74,6 @@ export type Database = {
           },
         ]
       }
-      roles: {
-        Row: {
-          id: string
-          name: string | null
-        }
-        Insert: {
-          id?: string
-          name?: string | null
-        }
-        Update: {
-          id?: string
-          name?: string | null
-        }
-        Relationships: []
-      }
       sheets: {
         Row: {
           created_at: string | null
@@ -138,10 +115,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      custom_access_token_hook: {
+        Args: {
+          event: Json
+        }
+        Returns: Json
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      role_type: "admin" | "tutor"
     }
     CompositeTypes: {
       [_ in never]: never

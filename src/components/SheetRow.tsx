@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 interface SheetRowProps {
   id: string;
   finished: boolean;
+  tutorName?: string;
   date: string;
   startTime: string;
   endTime: string | null;
@@ -16,6 +17,7 @@ interface SheetRowProps {
 const SheetRow = ({
   id,
   finished,
+  tutorName,
   date,
   startTime,
   endTime,
@@ -45,6 +47,11 @@ const SheetRow = ({
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
         {location}
       </td>
+      {tutorName && (
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+          {tutorName}
+        </td>
+      )}
       <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-bold">
         <button
           type="button"

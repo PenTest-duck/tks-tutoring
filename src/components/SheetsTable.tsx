@@ -6,13 +6,22 @@ import SheetRow from "./SheetRow";
 import { createClient } from "@/utils/supabase/client";
 import { Tables } from "@/utils/types/supabase";
 
-const SheetsTable = () => {
+interface SheetsTableProps {
+  shouldShowAll?: boolean;
+}
+
+const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
   const supabase = createClient();
   const [sheets, setSheets] = useState<
-    Pick<
+    (Pick<
       Tables<"sheets">,
       "id" | "date" | "start_time" | "end_time" | "location" | "finished"
-    >[]
+    > & {
+      profiles?: {
+        first_name: string;
+        last_name: string;
+      } | null;
+    })[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,13 +29,28 @@ const SheetsTable = () => {
   useEffect(() => {
     const fetchSheets = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from("sheets")
-        .select("id, date, start_time, end_time, location, finished")
+      const userId =
+        (await supabase.auth.getSession()).data.session?.user.id ?? "";
+
+      let query = shouldShowAll
+        ? supabase
+            .from("sheets")
+            .select(
+              "id, profiles (first_name, last_name), date, start_time, end_time, location, finished"
+            )
+        : supabase
+            .from("sheets")
+            .select("id, date, start_time, end_time, location, finished");
+      if (!shouldShowAll) {
+        query = query.eq("user_id", userId);
+      }
+      query = query
         .order("date", { ascending: false })
         .order("start_time", { ascending: false })
         .order("end_time", { ascending: false })
         .limit(10);
+      const { data, error } = await query;
+
       setIsLoading(false);
       if (error) {
         setError(error.message);
@@ -37,7 +61,7 @@ const SheetsTable = () => {
     };
 
     fetchSheets();
-  }, [supabase]);
+  }, [shouldShowAll, supabase]);
 
   return (
     <div className="flex flex-col">
@@ -66,6 +90,14 @@ const SheetsTable = () => {
                   >
                     Location
                   </th>
+                  {shouldShowAll && (
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                    >
+                      Tutor
+                    </th>
+                  )}
                   <th
                     scope="col"
                     className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
@@ -76,10 +108,10 @@ const SheetsTable = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
                 {isLoading ? (
-                  <TableSkeleton colSpan={5} />
+                  <TableSkeleton colSpan={shouldShowAll ? 6 : 5} />
                 ) : error ? (
                   <tr>
-                    <td colSpan={5}>
+                    <td colSpan={shouldShowAll ? 6 : 5}>
                       <p className="text-center p-4 text-error">{error}</p>
                     </td>
                   </tr>
@@ -93,6 +125,11 @@ const SheetsTable = () => {
                       startTime={sheet.start_time}
                       endTime={sheet.end_time}
                       location={sheet.location}
+                      tutorName={
+                        shouldShowAll
+                          ? `${sheet.profiles?.first_name} ${sheet.profiles?.last_name}`
+                          : undefined
+                      }
                     />
                   ))
                 )}

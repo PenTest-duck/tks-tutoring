@@ -73,7 +73,7 @@ const FinishShiftModal = ({
     <>
       <button
         onClick={openModal}
-        className="bg-pink-500 text-white px-4 py-2 rounded-md"
+        className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-md"
       >
         Finish shift
       </button>

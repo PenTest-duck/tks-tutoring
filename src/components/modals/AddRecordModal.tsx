@@ -202,8 +202,8 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
               </div>
             </div>
 
-            <div className="flex flex-row justify-between mt-4">
-              <p className="w-1/2 text-xs text-gray-400">
+            <div className="flex flex-row justify-between items-center mt-4">
+              <p className="text-xs text-gray-400">
                 End time will be filled when the student signs off.
               </p>
               <div>

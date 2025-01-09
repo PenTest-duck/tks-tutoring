@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { CircleUserRound } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -41,19 +42,21 @@ const NavBar = () => {
   return (
     <nav className="w-full bg-white z-50 max-h-16">
       <div className="flex flex-row justify-between w-full py-4 px-12">
-        <div className="flex flex-row items-center space-x-4">
-          <Image
-            src="/images/tks-logo.png"
-            alt="TKS logo"
-            width={32}
-            height={32}
-          />
-          <h1 className="hidden md:block text-lg text-primary-500 font-bold">
-            TKS Tutoring Sheets
-          </h1>
-        </div>
+        <Link href="/">
+          <div className="flex flex-row items-center space-x-4">
+            <Image
+              src="/images/tks-logo.png"
+              alt="TKS logo"
+              width={32}
+              height={32}
+            />
+            <h1 className="hidden md:block text-lg text-primary-500 font-bold">
+              TKS Tutoring Sheets
+            </h1>
+          </div>
+        </Link>
         <div className="flex flex-row items-center space-x-4 relative">
-          <p className="text-xs lg:text-md text-nowrap">{name}</p>
+          <p className="text-sm md:text-lg text-nowrap">{name}</p>
           <div className="relative">
             <CircleUserRound
               width={32}
