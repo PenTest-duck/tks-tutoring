@@ -1,22 +1,35 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import { CircleUserRound } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (!error && session?.user?.email) {
-        setEmail(session.user.email);
-      }
-    });
+    const cachedName = localStorage.getItem("fullName");
+    if (cachedName) {
+      setName(cachedName);
+      return;
+    }
+
+    supabase
+      .from("profiles")
+      .select("first_name, last_name")
+      .then(({ data, error }) => {
+        if (error || !data || data.length === 0) {
+          return;
+        }
+        const fullName = `${data[0].first_name} ${data[0].last_name}`;
+        localStorage.setItem("fullName", fullName);
+        setName(fullName);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -26,8 +39,8 @@ const NavBar = () => {
   };
 
   return (
-    <nav className=" w-full bg-white z-50 max-h-16">
-      <div className="flex flex-row justify-between w-full p-4">
+    <nav className="w-full bg-white z-50 max-h-16">
+      <div className="flex flex-row justify-between w-full py-4 px-12">
         <div className="flex flex-row items-center space-x-4">
           <Image
             src="/images/tks-logo.png"
@@ -35,19 +48,20 @@ const NavBar = () => {
             width={32}
             height={32}
           />
-          <h1 className="text-xl font-bold">TKS Tutoring</h1>
+          <h1 className="text-xl text-primary-500 font-bold">
+            TKS Tutoring Sheets
+          </h1>
         </div>
         <div className="flex flex-row items-center space-x-4 relative">
-          <p>{email}</p>
+          <p>{name}</p>
           <div className="relative">
-            <Image
-              src="/images/bot_pfp.png"
-              alt="Profile picture"
+            <CircleUserRound
               width={32}
               height={32}
               className="rounded-full cursor-pointer"
               onClick={() => setIsOpen(!isOpen)}
             />
+
             {isOpen && (
               <>
                 <div

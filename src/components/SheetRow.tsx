@@ -1,18 +1,21 @@
 "use client";
 
 import { formatDateString, formatTimeString } from "@/utils/helpers/time";
+import { CircleCheck, CirclePause } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface SheetRowProps {
   id: string;
+  finished: boolean;
   date: string;
   startTime: string;
-  endTime: string;
+  endTime: string | null;
   location: string;
 }
 
 const SheetRow = ({
   id,
+  finished,
   date,
   startTime,
   endTime,
@@ -26,6 +29,13 @@ const SheetRow = ({
 
   return (
     <tr onClick={handleClick} className="cursor-pointer">
+      <td className="pl-4 text-center">
+        {finished ? (
+          <CircleCheck color="white" fill="green" />
+        ) : (
+          <CirclePause color="white" fill="gray" />
+        )}
+      </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-neutral-200">
         {formatDateString(date)}
       </td>

@@ -4,7 +4,7 @@ import { SUBJECTS } from "@/constants";
 import { dateTo24HrTime } from "@/utils/helpers/time";
 import { createClient } from "@/utils/supabase/client";
 import { LoaderCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface AddRecordModalProps {
   sheetId: string;
@@ -18,6 +18,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
   const [studentName, setStudentName] = useState("");
   const [studentYear, setStudentYear] = useState("");
   const [subject, setSubject] = useState("");
+  const [isValidated, setIsValidated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -46,7 +47,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
         {
           sheet_id: sheetId,
           start_time: startTime,
-          end_time: endTime,
+          end_time: endTime || null,
           student_name: studentName,
           student_year: parseInt(studentYear),
           subject_area: subject,
@@ -63,6 +64,14 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
         closeModal();
       });
   };
+
+  useEffect(() => {
+    if (startTime && studentName && studentYear && subject) {
+      setIsValidated(true);
+    } else {
+      setIsValidated(false);
+    }
+  }, [startTime, studentName, studentYear, subject]);
 
   return (
     <>
@@ -89,7 +98,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
 
             <div className="flex flex-col space-y-4">
               <div className="flex flex-row space-x-4">
-                <div className="w-1/2">
+                <div className="w-full">
                   <label
                     htmlFor="start-time-input"
                     className="block text-sm font-medium mb-2 dark:text-white"
@@ -106,7 +115,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
                     required
                   />
                 </div>
-                <div className="w-1/2">
+                {/* <div className="w-1/2">
                   <label
                     htmlFor="end-time-input"
                     className="block text-sm font-medium mb-2 dark:text-white"
@@ -121,7 +130,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="flex flex-row justify-between space-x-4">
@@ -140,6 +149,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
                     value={studentName}
                     onChange={(e) => setStudentName(e.target.value)}
                     required
+                    autoComplete="off"
                   />
                 </div>
 
@@ -157,7 +167,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
                     onChange={(e) => setStudentYear(e.target.value)}
                     required
                   >
-                    <option></option>
+                    <option value=""></option>
                     <option>7</option>
                     <option>8</option>
                     <option>9</option>
@@ -182,7 +192,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
                   onChange={(e) => setSubject(e.target.value)}
                   required
                 >
-                  <option></option>
+                  <option value=""></option>
                   {SUBJECTS.map((subject) => (
                     <option key={subject} value={subject}>
                       {subject}
@@ -198,11 +208,13 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
               </button>
               <button
                 onClick={handleAdd}
-                className="px-4 py-2 bg-primary-600 text-white rounded"
+                className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded"
+                disabled={!isValidated}
               >
                 {isLoading ? <LoaderCircle className="animate-spin" /> : "Add"}
               </button>
             </div>
+            {error && <p className="mt-2 text-center text-error">{error}</p>}
           </div>
         </div>
       )}

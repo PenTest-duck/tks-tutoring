@@ -14,11 +14,13 @@ interface SheetProps {
     | "signature"
   >[];
   isLoading?: boolean;
+  error?: string;
 }
 
 const Sheet = ({
   records: records = [],
   isLoading: isLoading = false,
+  error,
 }: SheetProps) => {
   return (
     <div className="min-w-full flex flex-col">
@@ -69,6 +71,12 @@ const Sheet = ({
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
                 {isLoading ? (
                   <TableSkeleton colSpan={6} />
+                ) : error ? (
+                  <tr>
+                    <td colSpan={6} className="text-center text-error py-4">
+                      {error}
+                    </td>
+                  </tr>
                 ) : records.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center text-disabled py-4">

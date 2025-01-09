@@ -14,18 +14,29 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          role_id: string | null
         }
         Insert: {
           first_name?: string | null
           id: string
           last_name?: string | null
+          role_id?: string | null
         }
         Update: {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          role_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       records: {
         Row: {
@@ -71,11 +82,26 @@ export type Database = {
           },
         ]
       }
+      roles: {
+        Row: {
+          id: string
+          name: string | null
+        }
+        Insert: {
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
       sheets: {
         Row: {
           created_at: string | null
           date: string
-          end_time: string
+          end_time: string | null
           finished: boolean
           id: string
           location: string
@@ -86,7 +112,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           date: string
-          end_time: string
+          end_time?: string | null
           finished?: boolean
           id?: string
           location: string
@@ -97,7 +123,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           date?: string
-          end_time?: string
+          end_time?: string | null
           finished?: boolean
           id?: string
           location?: string

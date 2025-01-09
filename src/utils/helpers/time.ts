@@ -1,5 +1,5 @@
 export function formatTimeString(time?: string | null): string {
-  if (!time) return "N/A";
+  if (!time) return "";
 
   const [hours, minutes] = time.split(":").map(Number);
 
@@ -21,10 +21,10 @@ export function formatTimeString(time?: string | null): string {
 }
 
 export function formatDateString(date?: string | null): string {
-  if (!date) return "N/A";
+  if (!date) return "";
 
   const dateObj = new Date(date);
-  if (isNaN(dateObj.getTime())) return "N/A";
+  if (isNaN(dateObj.getTime())) return "";
 
   const months = [
     "Jan",
@@ -40,7 +40,10 @@ export function formatDateString(date?: string | null): string {
     "Nov",
     "Dec",
   ];
-  return `${dateObj.getDate()} ${
+
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  return `${days[dateObj.getDay()]}, ${dateObj.getDate()} ${
     months[dateObj.getMonth()]
   } ${dateObj.getFullYear()}`;
 }
@@ -52,3 +55,10 @@ export function dateTo24HrTime(date: Date): string {
     minute: "2-digit",
   });
 }
+
+export const getCurrentRoundedHour = () => {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() + 30);
+  now.setMinutes(0);
+  return now;
+};

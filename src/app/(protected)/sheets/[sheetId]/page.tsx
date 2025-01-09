@@ -1,18 +1,17 @@
 "use client";
 
-import AddRecordModal from "@/components/AddRecordModal";
+import AddRecordModal from "@/components/modals/AddRecordModal";
+import FinishShiftModal from "@/components/modals/FinishShiftModal";
 import Sheet from "@/components/Sheet";
 import { formatDateString, formatTimeString } from "@/utils/helpers/time";
 import { createClient } from "@/utils/supabase/client";
 import { Tables } from "@/utils/types/supabase";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
   const supabase = createClient();
-  const router = useRouter();
   const [sheet, setSheet] = useState<Tables<"sheets"> | null>(null);
   const [records, setRecords] = useState<
     Pick<
@@ -28,17 +27,6 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const handleFinish = async () => {
-    if (!sheet) return;
-    supabase
-      .from("sheets")
-      .update({ finished: true })
-      .eq("id", sheet.id)
-      .then(({ error }) => {
-        router.push("/sheets");
-      });
-  };
 
   useEffect(() => {
     const fetchSheet = async () => {
@@ -150,7 +138,7 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
   }, [supabase]);
 
   return (
-    <div className="flex flex-col items-center p-12">
+    <div className="flex flex-col p-12 space-y-4">
       <div className="self-start">
         <Link
           href="/sheets"
@@ -160,28 +148,35 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
           Back to all sheets
         </Link>
       </div>
-      <h2 className="text-4xl">New Sheet</h2>
-      <p className="mb-12">
-        {!isLoading && (
-          <span>
-            {sheet?.location} · {formatDateString(sheet?.date)} ·{" "}
-            {formatTimeString(sheet?.start_time)} -{" "}
-            {formatTimeString(sheet?.end_time)}
-          </span>
-        )}
-      </p>
-
-      <Sheet records={records} isLoading={isLoading} />
-
-      <div className="mt-8 flex flex-row w-full justify-between">
-        <button
-          onClick={handleFinish}
-          className="bg-pink-500 text-white px-4 py-2 rounded-md"
-        >
-          Finish shift
-        </button>
-        <AddRecordModal sheetId={sheet?.id ?? ""} />
+      <div className="flex flex-row items-center justify-between mb-4">
+        <h2 className="text-3xl font-bold">
+          {sheet && (sheet.finished ? "Completed sheet" : "Draft sheet")}
+        </h2>
+        <p>
+          {!isLoading && (
+            <span>
+              {sheet?.location} · {formatDateString(sheet?.date)} ·{" "}
+              {formatTimeString(sheet?.start_time)} -{" "}
+              {formatTimeString(sheet?.end_time)}
+            </span>
+          )}
+        </p>
       </div>
+
+      <Sheet records={records} isLoading={isLoading} error={error} />
+
+      {sheet && !sheet?.finished && (
+        <div className="mt-8 flex flex-row w-full justify-between">
+          <FinishShiftModal
+            sheetId={sheet?.id ?? ""}
+            date={sheet?.date ?? ""}
+            startTime={sheet?.start_time ?? ""}
+            endTime={sheet?.end_time}
+            location={sheet?.location ?? ""}
+          />
+          <AddRecordModal sheetId={sheet?.id ?? ""} />
+        </div>
+      )}
     </div>
   );
 };
