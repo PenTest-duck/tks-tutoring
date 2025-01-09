@@ -14,12 +14,6 @@ const NavBar = () => {
   const supabase = createClient();
 
   useEffect(() => {
-    const cachedName = localStorage.getItem("fullName");
-    if (cachedName) {
-      setName(cachedName);
-      return;
-    }
-
     supabase
       .from("profiles")
       .select("first_name, last_name")
@@ -28,7 +22,6 @@ const NavBar = () => {
           return;
         }
         const fullName = `${data[0].first_name} ${data[0].last_name}`;
-        localStorage.setItem("fullName", fullName);
         setName(fullName);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
