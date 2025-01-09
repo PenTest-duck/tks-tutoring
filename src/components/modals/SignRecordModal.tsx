@@ -66,7 +66,7 @@ const SignRecordModal = ({
             canvasProps={{ width: 500, height: 200 }}
           />
         </div>
-        <div className="flex flex-row justify-end mt-4">
+        <div className="flex flex-col-reverse sm:flex-row justify-end mt-4">
           <button onClick={() => setIsOpen(false)} className="px-4 py-2">
             Cancel
           </button>

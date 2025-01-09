@@ -189,11 +189,11 @@ const AddSheetModal = () => {
               </div>
             </div>
 
-            <div className="flex flex-row justify-between items-center mt-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
               <p className="text-xs text-gray-400">
                 End time will be filled when you finish the shift.
               </p>
-              <div>
+              <div className="flex flex-col-reverse sm:flex-row w-full sm:w-auto">
                 <button onClick={closeModal} className="px-4 py-2">
                   Cancel
                 </button>

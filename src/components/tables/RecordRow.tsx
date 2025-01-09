@@ -2,7 +2,7 @@
 
 import { formatTimeString } from "@/utils/helpers/time";
 import Image from "next/image";
-import SignRecordModal from "./modals/SignRecordModal";
+import SignRecordModal from "../modals/SignRecordModal";
 import { useState } from "react";
 
 interface RecordRowProps {

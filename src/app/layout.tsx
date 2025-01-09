@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import PrelineScript from "@/components/PrelineScript";
+import PrelineScript from "@/components/preline/PrelineScript";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TableSkeleton from "./preline/TableSkeleton";
+import TableSkeleton from "@/components/preline/TableSkeleton";
 import SheetRow from "./SheetRow";
 import { createClient } from "@/utils/supabase/client";
 import { Tables } from "@/utils/types/supabase";

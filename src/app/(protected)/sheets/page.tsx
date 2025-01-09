@@ -1,7 +1,7 @@
 "use client";
 
 import AddSheetModal from "@/components/modals/AddSheetModal";
-import SheetsTable from "@/components/SheetsTable";
+import SheetsTable from "@/components/tables/SheetsTable";
 import { getRole } from "@/utils/supabase/authHelpers";
 import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";

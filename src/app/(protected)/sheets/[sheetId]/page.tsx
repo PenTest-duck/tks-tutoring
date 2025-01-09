@@ -2,7 +2,7 @@
 
 import AddRecordModal from "@/components/modals/AddRecordModal";
 import FinishShiftModal from "@/components/modals/FinishShiftModal";
-import Sheet from "@/components/Sheet";
+import RecordsTable from "@/components/tables/RecordsTable";
 import { formatDateString, formatTimeString } from "@/utils/helpers/time";
 import { createClient } from "@/utils/supabase/client";
 import { Tables } from "@/utils/types/supabase";
@@ -164,7 +164,7 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
         </p>
       </div>
 
-      <Sheet records={records} isLoading={isLoading} error={error} />
+      <RecordsTable records={records} isLoading={isLoading} error={error} />
 
       {sheet && !sheet?.finished && (
         <div className="mt-8 flex flex-col-reverse gap-4 sm:flex-row w-full justify-between">

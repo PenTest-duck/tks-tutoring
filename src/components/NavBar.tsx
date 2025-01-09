@@ -17,11 +17,13 @@ const NavBar = () => {
     supabase
       .from("profiles")
       .select("first_name, last_name")
+      .limit(1)
+      .single()
       .then(({ data, error }) => {
-        if (error || !data || data.length === 0) {
+        if (error || !data) {
           return;
         }
-        const fullName = `${data[0].first_name} ${data[0].last_name}`;
+        const fullName = `${data.first_name} ${data.last_name}`;
         setName(fullName);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

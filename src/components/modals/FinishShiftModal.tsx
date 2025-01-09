@@ -99,7 +99,9 @@ const FinishShiftModal = ({
                     ? formatTimeString(endTime)
                     : formatTimeString(currentTime)}
                 </p>
-                <p>{numRecords ?? 0} records</p>
+                <p>
+                  {numRecords ?? 0} record{numRecords !== 1 && "s"}
+                </p>
               </div>
 
               <div>
@@ -118,17 +120,18 @@ const FinishShiftModal = ({
               </div>
             </div>
 
-            <div className="flex flex-row justify-between items-center mt-4">
-              <p className="w-1/2 text-xs text-gray-400">
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
+              <p className="text-xs text-gray-400">
                 You cannot edit the sheet afterwards.
               </p>
-              <div>
+              <div className="flex flex-col-reverse sm:flex-row w-full sm:w-auto">
                 <button onClick={closeModal} className="px-4 py-2">
                   Cancel
                 </button>
                 <button
                   onClick={handleFinish}
-                  className="px-4 py-2 bg-primary-600 text-white rounded"
+                  className="px-4 py-2 bg-primary-600 disabled:bg-primary-500 text-white rounded"
+                  // disabled={sigCanvas.current?.isEmpty()}
                 >
                   {isLoading ? (
                     <LoaderCircle className="animate-spin" />

@@ -1,8 +1,8 @@
 import { Tables } from "@/utils/types/supabase";
 import RecordRow from "./RecordRow";
-import TableSkeleton from "./preline/TableSkeleton";
+import TableSkeleton from "@/components/preline/TableSkeleton";
 
-interface SheetProps {
+interface RecordsTableProps {
   records?: Pick<
     Tables<"records">,
     | "id"
@@ -17,11 +17,11 @@ interface SheetProps {
   error?: string;
 }
 
-const Sheet = ({
+const RecordsTable = ({
   records: records = [],
   isLoading: isLoading = false,
   error,
-}: SheetProps) => {
+}: RecordsTableProps) => {
   return (
     <div className="min-w-full flex flex-col">
       <div className="-m-1.5 overflow-x-auto">
@@ -106,4 +106,4 @@ const Sheet = ({
   );
 };
 
-export default Sheet;
+export default RecordsTable;
