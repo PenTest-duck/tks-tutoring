@@ -9,9 +9,25 @@ import { Tables } from "@/utils/types/supabase";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 
 const PAGE_SIZE = 25;
+
+const BackButton = () => {
+  const searchParams = useSearchParams();
+  const isAdmin = searchParams.has("admin");
+
+  return (
+    <Link
+      href={isAdmin ? "/admin" : "/sheets"}
+      className="flex flex-row items-center text-primary-600 hover:text-primary-500"
+    >
+      <ChevronLeft className="-ml-1" />
+      {isAdmin ? "All sheets" : "My sheets"}
+    </Link>
+  );
+};
 
 const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
   const supabase = createClient();
@@ -198,13 +214,9 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
   return (
     <div className="flex flex-col p-12 space-y-4">
       <div className="self-start">
-        <Link
-          href="/sheets"
-          className="flex flex-row items-center text-primary-600 hover:text-primary-500"
-        >
-          <ChevronLeft className="-ml-1" />
-          My sheets
-        </Link>
+        <Suspense fallback={null}>
+          <BackButton />
+        </Suspense>
       </div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
         <h2 className="text-3xl font-bold">

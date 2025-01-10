@@ -18,6 +18,7 @@ type RecordType = {
 const DownloadAllRecordsButton = () => {
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const toCsv = (records: RecordType[]) => {
     return [
@@ -57,6 +58,7 @@ const DownloadAllRecordsButton = () => {
       )
       .then(async ({ data, error }) => {
         if (error || !data) {
+          setError(error.message || "No data to export.");
           return;
         }
 
@@ -103,6 +105,7 @@ const DownloadAllRecordsButton = () => {
           "Download all records as CSV"
         )}
       </button>
+      {error && <p className="text-error">{error}</p>}
     </div>
   );
 };

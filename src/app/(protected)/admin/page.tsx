@@ -24,7 +24,7 @@ const AdminPage = async () => {
 
       <div className="flex flex-col gap-4">
         <h2 className="text-3xl font-bold">All sheets</h2>
-        <SheetsTable shouldShowAll={true} />
+        <SheetsTable isAdmin={true} />
       </div>
 
       <div className="flex flex-col gap-4">

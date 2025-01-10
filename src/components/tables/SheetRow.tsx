@@ -13,6 +13,7 @@ interface SheetRowProps {
   startTime: string;
   endTime: string | null;
   location: string;
+  isAdmin?: boolean;
 }
 
 const SheetRow = ({
@@ -23,12 +24,15 @@ const SheetRow = ({
   startTime,
   endTime,
   location,
+  isAdmin,
 }: SheetRowProps) => {
   const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
 
   const handleClick = () => {
-    router.push(`/sheets/${id}`);
+    let url = `/sheets/${id}`;
+    if (isAdmin) url += "?admin";
+    router.push(url);
   };
 
   return (

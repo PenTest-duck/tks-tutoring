@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PAGE_SIZE = 10;
 
 interface SheetsTableProps {
-  shouldShowAll?: boolean;
+  isAdmin?: boolean;
 }
 
 type SheetType = (Pick<
@@ -24,7 +24,7 @@ type SheetType = (Pick<
   } | null;
 })[];
 
-const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
+const SheetsTable = ({ isAdmin }: SheetsTableProps) => {
   const supabase = createClient();
   const [userId, setUserId] = useState("");
 
@@ -38,7 +38,7 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
     error,
   } = useInfiniteOffsetPaginationQuery(
     userId
-      ? shouldShowAll
+      ? isAdmin
         ? supabase
             .from("sheets")
             .select(
@@ -93,7 +93,7 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
                   >
                     Location
                   </th>
-                  {shouldShowAll && (
+                  {isAdmin && (
                     <th
                       scope="col"
                       className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
@@ -112,10 +112,10 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
                 {isLoading || isValidating ? (
-                  <TableSkeleton colSpan={shouldShowAll ? 6 : 5} />
+                  <TableSkeleton colSpan={isAdmin ? 6 : 5} />
                 ) : error ? (
                   <tr>
-                    <td colSpan={shouldShowAll ? 6 : 5}>
+                    <td colSpan={isAdmin ? 6 : 5}>
                       <p className="text-center p-4 text-error">
                         {error.message}
                       </p>
@@ -132,10 +132,11 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
                       endTime={sheet.end_time}
                       location={sheet.location}
                       tutorName={
-                        shouldShowAll
+                        isAdmin
                           ? `${sheet.profiles?.first_name} ${sheet.profiles?.last_name}`
                           : undefined
                       }
+                      isAdmin={isAdmin}
                     />
                   ))
                 )}
