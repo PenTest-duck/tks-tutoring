@@ -37,7 +37,7 @@ const NavBar = () => {
               width={32}
               height={32}
             />
-            <h1 className="hidden md:block text-lg text-primary-500 font-bold">
+            <h1 className="hidden md:block text-lg text-primary-600 font-bold">
               TKS Tutoring Sheets
             </h1>
           </div>

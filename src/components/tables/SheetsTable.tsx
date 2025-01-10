@@ -101,12 +101,12 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
                       Tutor
                     </th>
                   )}
-                  <th
+                  {/* <th
                     scope="col"
                     className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
                   >
                     Action
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
