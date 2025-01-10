@@ -44,7 +44,7 @@ const NavBar = () => {
         </Link>
         <div className="flex flex-row items-center space-x-4 relative">
           <p className="text-sm md:text-lg text-nowrap">
-            {!error && `${data?.first_name} ${data?.last_name}`}
+            {!error && data && `${data.first_name} ${data.last_name}`}
           </p>
           <div className="relative">
             <CircleUserRound
