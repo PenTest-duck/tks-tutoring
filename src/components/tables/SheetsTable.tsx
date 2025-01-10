@@ -101,6 +101,7 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
                       Tutor
                     </th>
                   )}
+                  <th scope="col"></th>
                   {/* <th
                     scope="col"
                     className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"

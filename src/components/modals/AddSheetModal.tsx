@@ -55,6 +55,13 @@ const AddSheetModal = () => {
       return;
     }
 
+    const userId = data.session?.user.id;
+    if (!userId) {
+      setIsLoading(false);
+      setError("Failed to create sheet.");
+      return;
+    }
+
     supabase
       .from("sheets")
       .insert([
@@ -63,7 +70,7 @@ const AddSheetModal = () => {
           start_time: startTime,
           end_time: endTime || null,
           location,
-          user_id: data.session?.user.id,
+          user_id: userId,
         },
       ])
       .select("id")

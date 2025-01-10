@@ -11,18 +11,22 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          email: string
           first_name: string | null
           id: string
           last_name: string | null
           role: Database["public"]["Enums"]["role_type"]
+          full_name: string | null
         }
         Insert: {
+          email: string
           first_name?: string | null
           id: string
           last_name?: string | null
           role?: Database["public"]["Enums"]["role_type"]
         }
         Update: {
+          email?: string
           first_name?: string | null
           id?: string
           last_name?: string | null
@@ -84,7 +88,7 @@ export type Database = {
           location: string
           signature: string | null
           start_time: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string | null
@@ -95,7 +99,7 @@ export type Database = {
           location: string
           signature?: string | null
           start_time: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string | null
@@ -106,9 +110,17 @@ export type Database = {
           location?: string
           signature?: string | null
           start_time?: string
-          user_id?: string | null
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sheets_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -120,6 +132,12 @@ export type Database = {
           event: Json
         }
         Returns: Json
+      }
+      full_name: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
       }
       is_admin: {
         Args: Record<PropertyKey, never>

@@ -21,21 +21,23 @@ const TutorsTable = () => {
   } = useInfiniteOffsetPaginationQuery(
     supabase
       .from("profiles")
-      .select("id, first_name, last_name, role")
+      .select("id, full_name, email, role") // also return num_sheets
       .order("role")
       .order("first_name")
       .order("last_name"),
     { revalidateOnFocus: false, pageSize: PAGE_SIZE }
   );
 
-  const tutorRow = (tutor: Tables<"profiles">) => {
+  const tutorRow = (
+    tutor: Pick<Tables<"profiles">, "id" | "full_name" | "email" | "role">
+  ) => {
     return (
       <tr key={tutor.id}>
         <td className="font-bold px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-          {tutor.first_name} {tutor.last_name}
+          {tutor.full_name}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-          TODO
+          {tutor.email}
         </td>
         <td className="capitalize px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
           {tutor.role}
@@ -70,12 +72,12 @@ const TutorsTable = () => {
                   >
                     Role
                   </th>
-                  <th
+                  {/* <th
                     scope="col"
                     className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
                   >
                     Action
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { formatDateString, formatTimeString } from "@/utils/helpers/time";
-import { CircleCheck, CirclePause } from "lucide-react";
+import { ChevronRight, CircleCheck, CirclePause } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface SheetRowProps {
   id: string;
@@ -24,13 +25,19 @@ const SheetRow = ({
   location,
 }: SheetRowProps) => {
   const router = useRouter();
+  const [isHovering, setIsHovering] = useState(false);
 
   const handleClick = () => {
     router.push(`/sheets/${id}`);
   };
 
   return (
-    <tr onClick={handleClick} className="cursor-pointer">
+    <tr
+      onClick={handleClick}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      className="cursor-pointer"
+    >
       <td className="pl-4 text-center">
         {finished ? (
           <CircleCheck color="white" fill="green" />
@@ -52,6 +59,10 @@ const SheetRow = ({
           {tutorName}
         </td>
       )}
+      <td className="w-8">
+        {isHovering && <ChevronRight width={16} height={16} />}
+      </td>
+
       {/* <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-bold">
         <button
           type="button"

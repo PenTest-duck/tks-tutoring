@@ -1,3 +1,4 @@
+import DownloadAllRecordsButton from "@/components/DownloadAllRecordsButton";
 import AnalyticsTable from "@/components/tables/AnalyticsTable";
 import SheetsTable from "@/components/tables/SheetsTable";
 import TutorsTable from "@/components/tables/TutorsTable";
@@ -7,8 +8,8 @@ import Link from "next/link";
 const AdminPage = async () => {
   return (
     <div className="flex flex-col p-12 gap-8">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-row justify-between">
+      <div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-3xl font-bold">Overview</h2>
           <Link href="/sheets">
             <button className="w-full sm:w-auto px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white text-center rounded">
@@ -29,6 +30,11 @@ const AdminPage = async () => {
       <div className="flex flex-col gap-4">
         <h2 className="text-3xl font-bold">All tutors</h2>
         <TutorsTable />
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <h2 className="text-3xl font-bold">Exports</h2>
+        <DownloadAllRecordsButton />
       </div>
     </div>
   );
