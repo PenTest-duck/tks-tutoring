@@ -15,12 +15,14 @@ interface RecordsTableProps {
   >[];
   isLoading?: boolean;
   error?: string;
+  isEditable: boolean;
 }
 
 const RecordsTable = ({
   records: records = [],
   isLoading: isLoading = false,
   error,
+  isEditable,
 }: RecordsTableProps) => {
   return (
     <div className="min-w-full flex flex-col">
@@ -94,6 +96,7 @@ const RecordsTable = ({
                       studentYear={record.student_year}
                       subject={record.subject_area}
                       signature={record.signature ?? ""}
+                      isEditable={isEditable}
                     />
                   ))
                 )}
@@ -102,6 +105,11 @@ const RecordsTable = ({
           </div>
         </div>
       </div>
+      {isEditable && (
+        <p className="text-end text-xs text-gray-400 mt-2">
+          All records must be filled in to complete the sheet.
+        </p>
+      )}
     </div>
   );
 };

@@ -224,7 +224,11 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
         </p>
       </div>
 
-      <RecordsTable records={records} isLoading={isLoading} />
+      <RecordsTable
+        records={records}
+        isLoading={isLoading}
+        isEditable={!sheet?.finished}
+      />
 
       {sheet && !sheet?.finished && (
         <div className="mt-8 flex flex-col-reverse gap-4 sm:flex-row w-full justify-between">
@@ -235,6 +239,7 @@ const NewSheet = ({ params }: { params: Promise<{ sheetId: string }> }) => {
             endTime={sheet?.end_time}
             location={sheet?.location ?? ""}
             numRecords={records.length}
+            isFinishable={records.every((record) => record.signature)}
           />
           <AddRecordModal sheetId={sheet?.id ?? ""} />
         </div>

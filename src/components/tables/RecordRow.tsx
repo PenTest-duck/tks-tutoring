@@ -13,6 +13,7 @@ interface RecordRowProps {
   studentYear: number | null;
   subject: string;
   signature?: string;
+  isEditable: boolean;
 }
 
 const RecordRow = ({
@@ -23,6 +24,7 @@ const RecordRow = ({
   studentYear,
   subject,
   signature,
+  isEditable,
 }: RecordRowProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -53,13 +55,15 @@ const RecordRow = ({
               height={24}
               style={{ objectFit: "contain", height: "24px", width: "96px" }}
             />
-          ) : (
+          ) : isEditable ? (
             <button
               onClick={() => setIsModalOpen(true)}
               className="font-bold text-primary-600 hover:text-indigo-400 transition-colors"
             >
               Sign off
             </button>
+          ) : (
+            <p className="italic">No signature</p>
           )}
 
           {isModalOpen && (

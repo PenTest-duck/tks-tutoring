@@ -19,6 +19,7 @@ interface FinishShiftModalProps {
   endTime?: string | null;
   location: string;
   numRecords?: number;
+  isFinishable?: boolean;
 }
 
 const FinishShiftModal = ({
@@ -28,6 +29,7 @@ const FinishShiftModal = ({
   endTime,
   location,
   numRecords,
+  isFinishable,
 }: FinishShiftModalProps) => {
   const supabase = createClient();
   const router = useRouter();
@@ -57,7 +59,11 @@ const FinishShiftModal = ({
       .toDataURL("image/png");
     supabase
       .from("sheets")
-      .update({ finished: true, signature: signatureDataUrl })
+      .update({
+        end_time: currentTime,
+        finished: true,
+        signature: signatureDataUrl,
+      })
       .eq("id", sheetId)
       .then(({ error }) => {
         setIsLoading(false);
@@ -73,9 +79,10 @@ const FinishShiftModal = ({
     <>
       <button
         onClick={openModal}
-        className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-md"
+        className="bg-pink-500 hover:bg-pink-600 disabled:bg-pink-400 text-white px-4 py-2 rounded-md"
+        disabled={!isFinishable}
       >
-        Finish shift
+        Complete sheet
       </button>
 
       {isModalOpen && (
