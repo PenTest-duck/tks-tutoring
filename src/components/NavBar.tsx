@@ -6,21 +6,35 @@ import { CircleUserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const [userId, setUserId] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data, error } = useQuery(
-    supabase.from("profiles").select("first_name, last_name").limit(1).single(),
+    userId
+      ? supabase
+          .from("profiles")
+          .select("first_name, last_name")
+          .eq("id", userId)
+          .limit(1)
+          .single()
+      : null,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       revalidateIfStale: false,
     }
   );
+
+  useEffect(() => {
+    supabase.auth
+      .getSession()
+      .then(({ data }) => setUserId(data.session?.user.id ?? ""));
+  }, [supabase]);
 
   const signOut = () => {
     supabase.auth.signOut().then(() => router.push("/login"));
