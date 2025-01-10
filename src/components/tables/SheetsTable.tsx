@@ -5,63 +5,66 @@ import TableSkeleton from "@/components/preline/TableSkeleton";
 import SheetRow from "./SheetRow";
 import { createClient } from "@/utils/supabase/client";
 import { Tables } from "@/utils/types/supabase";
+import { useInfiniteOffsetPaginationQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const PAGE_SIZE = 10;
 
 interface SheetsTableProps {
   shouldShowAll?: boolean;
 }
 
+type SheetType = (Pick<
+  Tables<"sheets">,
+  "id" | "date" | "start_time" | "end_time" | "location" | "finished"
+> & {
+  profiles?: {
+    first_name: string;
+    last_name: string;
+  } | null;
+})[];
+
 const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
   const supabase = createClient();
-  const [sheets, setSheets] = useState<
-    (Pick<
-      Tables<"sheets">,
-      "id" | "date" | "start_time" | "end_time" | "location" | "finished"
-    > & {
-      profiles?: {
-        first_name: string;
-        last_name: string;
-      } | null;
-    })[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [userId, setUserId] = useState("");
 
-  useEffect(() => {
-    const fetchSheets = async () => {
-      setIsLoading(true);
-      const userId =
-        (await supabase.auth.getSession()).data.session?.user.id ?? "";
-
-      let query = shouldShowAll
+  const {
+    currentPage: sheets,
+    previousPage,
+    nextPage,
+    pageIndex,
+    isLoading,
+    isValidating,
+    error,
+  } = useInfiniteOffsetPaginationQuery(
+    userId
+      ? shouldShowAll
         ? supabase
             .from("sheets")
             .select(
               "id, profiles (first_name, last_name), date, start_time, end_time, location, finished"
             )
+            .order("date", { ascending: false })
+            .order("start_time", { ascending: false })
+            .order("end_time", { ascending: false })
+            .returns<SheetType>()
         : supabase
             .from("sheets")
-            .select("id, date, start_time, end_time, location, finished");
-      if (!shouldShowAll) {
-        query = query.eq("user_id", userId);
-      }
-      query = query
-        .order("date", { ascending: false })
-        .order("start_time", { ascending: false })
-        .order("end_time", { ascending: false })
-        .limit(10);
-      const { data, error } = await query;
+            .select("id, date, start_time, end_time, location, finished")
+            .eq("user_id", userId)
+            .order("date", { ascending: false })
+            .order("start_time", { ascending: false })
+            .order("end_time", { ascending: false })
+            .returns<SheetType>()
+      : null,
+    { revalidateOnFocus: false, pageSize: PAGE_SIZE }
+  );
 
-      setIsLoading(false);
-      if (error) {
-        setError(error.message);
-        return;
-      }
-
-      setSheets(data);
-    };
-
-    fetchSheets();
-  }, [shouldShowAll, supabase]);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setUserId(data.session?.user.id ?? "");
+    });
+  }, [supabase]);
 
   return (
     <div className="flex flex-col">
@@ -107,16 +110,18 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                {isLoading ? (
+                {isLoading || isValidating ? (
                   <TableSkeleton colSpan={shouldShowAll ? 6 : 5} />
                 ) : error ? (
                   <tr>
                     <td colSpan={shouldShowAll ? 6 : 5}>
-                      <p className="text-center p-4 text-error">{error}</p>
+                      <p className="text-center p-4 text-error">
+                        {error.message}
+                      </p>
                     </td>
                   </tr>
                 ) : (
-                  sheets.map((sheet) => (
+                  sheets?.map((sheet) => (
                     <SheetRow
                       key={sheet.id}
                       id={sheet.id}
@@ -138,6 +143,25 @@ const SheetsTable = ({ shouldShowAll }: SheetsTableProps) => {
           </div>
         </div>
       </div>
+      {(previousPage || nextPage) && (
+        <div className="flex flex-row justify-center mt-2 gap-2">
+          <div className="w-6">
+            {previousPage && (
+              <button onClick={() => previousPage?.()}>
+                <ChevronLeft />
+              </button>
+            )}
+          </div>
+          <p>{pageIndex + 1}</p>
+          <div className="w-6">
+            {nextPage && (
+              <button onClick={() => nextPage?.()}>
+                <ChevronRight />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

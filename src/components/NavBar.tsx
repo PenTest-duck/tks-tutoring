@@ -1,37 +1,29 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { CircleUserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState("");
   const router = useRouter();
   const supabase = createClient();
 
-  useEffect(() => {
-    supabase
-      .from("profiles")
-      .select("first_name, last_name")
-      .limit(1)
-      .single()
-      .then(({ data, error }) => {
-        if (error || !data) {
-          return;
-        }
-        const fullName = `${data.first_name} ${data.last_name}`;
-        setName(fullName);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data, error } = useQuery(
+    supabase.from("profiles").select("first_name, last_name").limit(1).single(),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
+    }
+  );
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+  const signOut = () => {
+    supabase.auth.signOut().then(() => router.push("/login"));
   };
 
   return (
@@ -51,7 +43,9 @@ const NavBar = () => {
           </div>
         </Link>
         <div className="flex flex-row items-center space-x-4 relative">
-          <p className="text-sm md:text-lg text-nowrap">{name}</p>
+          <p className="text-sm md:text-lg text-nowrap">
+            {!error && `${data?.first_name} ${data?.last_name}`}
+          </p>
           <div className="relative">
             <CircleUserRound
               width={32}

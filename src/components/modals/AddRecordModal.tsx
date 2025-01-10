@@ -213,7 +213,7 @@ const AddRecordModal = ({ sheetId }: AddRecordModalProps) => {
                 </button>
                 <button
                   onClick={handleAdd}
-                  className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded"
+                  className="px-4 py-2 bg-primary-600 disabled:bg-primary-300 text-white rounded flex items-center justify-center"
                   disabled={!isValidated}
                 >
                   {isLoading ? (

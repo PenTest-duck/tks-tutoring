@@ -130,7 +130,7 @@ const FinishShiftModal = ({
                 </button>
                 <button
                   onClick={handleFinish}
-                  className="px-4 py-2 bg-primary-600 disabled:bg-primary-500 text-white rounded"
+                  className="px-4 py-2 bg-primary-600 disabled:bg-primary-500 text-white rounded flex items-center justify-center"
                   // disabled={sigCanvas.current?.isEmpty()}
                 >
                   {isLoading ? (
