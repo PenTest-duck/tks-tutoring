@@ -11,7 +11,10 @@ const Sheets = () => {
   const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    getRole().then((role) => setUserRole(role));
+    getRole().then((role) => {
+      console.log("ROLE", role);
+      setUserRole(role);
+    });
   }, []);
 
   return (
