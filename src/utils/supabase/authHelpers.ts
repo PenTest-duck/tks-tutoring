@@ -13,7 +13,7 @@ export const getRole = async () => {
     if (token) {
       const verifiedToken = await jwtVerify(
         token,
-        new TextEncoder().encode(process.env.NEXT_PUBLIC_SUPABASE_JWT_SECRET)
+        new TextEncoder().encode(process.env.SUPABASE_JWT_SECRET)
       );
       if (verifiedToken) {
         const payloadBase64 = token.split(".")[1];
