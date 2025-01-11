@@ -12,7 +12,6 @@ const Sheets = () => {
 
   useEffect(() => {
     getRole().then((role) => {
-      console.log("ROLE", role);
       setUserRole(role);
     });
   }, []);

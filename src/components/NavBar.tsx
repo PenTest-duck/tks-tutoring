@@ -32,7 +32,6 @@ const NavBar = () => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      console.log("SESSION DATA", data);
       setUserId(data.session?.user.id ?? "");
     });
   }, [supabase]);
