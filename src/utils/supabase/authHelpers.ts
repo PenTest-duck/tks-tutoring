@@ -10,21 +10,26 @@ export const getRole = async () => {
 
   try {
     const token = (await supabase.auth.getSession()).data.session?.access_token;
+    console.log("TOKEN", token);
     if (token) {
       const verifiedToken = await jwtVerify(
         token,
         new TextEncoder().encode(process.env.SUPABASE_JWT_SECRET)
       );
+      console.log("VERIFIED TOKEN", verifiedToken);
+      console.log("SEC LENGTH", process.env.SUPABASE_JWT_SECRET?.length);
       if (verifiedToken) {
         const payloadBase64 = token.split(".")[1];
         const decodedPayload = Buffer.from(payloadBase64, "base64").toString();
         const userRole = JSON.parse(decodedPayload).user_role;
+        console.log("USER ROLE", userRole);
         return userRole;
       }
     }
   } catch (error) {
     console.error("Error decoding token or fetching user role:", error);
   }
+  console.log("NORETURN");
 };
 
 export async function signup(
