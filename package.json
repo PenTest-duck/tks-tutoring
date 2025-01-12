@@ -20,7 +20,8 @@
     "react": "^19.0.0",
     "react-datepicker": "^7.6.0",
     "react-dom": "^19.0.0",
-    "react-signature-canvas": "^1.0.7"
+    "react-signature-canvas": "^1.0.7",
+    "recharts": "^2.15.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -1,5 +1,5 @@
 import DownloadAllRecordsButton from "@/components/DownloadAllRecordsButton";
-import AnalyticsTable from "@/components/tables/AnalyticsTable";
+import AnalyticsCharts from "@/components/tables/AnalyticsCharts";
 import SheetsTable from "@/components/tables/SheetsTable";
 import TutorsTable from "@/components/tables/TutorsTable";
 import { SquareArrowOutUpRight } from "lucide-react";
@@ -19,7 +19,7 @@ const AdminPage = async () => {
             </button>
           </Link>
         </div>
-        <AnalyticsTable />
+        <AnalyticsCharts />
       </div>
 
       <div className="flex flex-col gap-4">

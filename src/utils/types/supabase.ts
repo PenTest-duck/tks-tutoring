@@ -124,7 +124,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      records_per_location: {
+        Row: {
+          location: string | null
+          records_count: number | null
+        }
+        Relationships: []
+      }
+      records_per_subject: {
+        Row: {
+          records_count: number | null
+          subject_area: string | null
+        }
+        Relationships: []
+      }
+      records_per_year: {
+        Row: {
+          records_count: number | null
+          student_year: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       custom_access_token_hook: {
